@@ -19,7 +19,7 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         /** @var \himiklab\sitemap\Sitemap $module */
-        $module = $this->module;
+        $module = Yii::$app->sitemap;
 
         if (!$sitemapData = $module->cacheProvider->get($module->cacheKey)) {
             $sitemapData = $module->buildSitemap();
