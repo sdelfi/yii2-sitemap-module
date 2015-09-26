@@ -21,7 +21,7 @@ class DefaultController extends Controller
         return [
             'pageCache' => [
                 'class' => 'yii\filters\PageCache',
-                'only' => ['index'],
+                'only' => ['index', 'robots-txt'],
                 'duration' => \Yii::$app->params['cacheExpire'],
             ],
         ];
@@ -43,5 +43,14 @@ class DefaultController extends Controller
             $headers->add('Content-Length', strlen($sitemapData));
         }
         return $sitemapData;
+    }
+
+    public function actionRobotsTxt()
+    {
+        \Yii::$app->response->format = 'txt';
+        return $this->renderPartial('robots-txt', [
+            'host' => \Yii::$app->request->serverName,
+            'sitemap' => \Yii::$app->urlManager->createAbsoluteUrl([$this->module->id.'/'. $this->id .'/index']),
+        ]);
     }
 }
