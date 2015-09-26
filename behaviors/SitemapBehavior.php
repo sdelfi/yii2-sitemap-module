@@ -5,7 +5,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace himiklab\sitemap\behaviors;
+namespace assayerpro\sitemap\behaviors;
 
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
@@ -40,7 +40,7 @@ use yii\base\InvalidConfigException;
  *
  * @see http://www.sitemaps.org/protocol.html
  * @author HimikLab
- * @package himiklab\sitemap
+ * @package assayerpro\sitemap
  */
 class SitemapBehavior extends Behavior
 {

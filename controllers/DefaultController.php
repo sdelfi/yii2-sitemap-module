@@ -5,7 +5,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace himiklab\sitemap\controllers;
+namespace assayerpro\sitemap\controllers;
 
 use Yii;
 use yii\web\Controller;

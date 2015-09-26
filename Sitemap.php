@@ -5,7 +5,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace himiklab\sitemap;
+namespace assayerpro\sitemap;
 
 use Yii;
 use yii\base\InvalidConfigException;
