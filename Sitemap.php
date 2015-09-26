@@ -18,7 +18,7 @@ use yii\caching\Cache;
  * @author HimikLab
  * @package himiklab\sitemap
  */
-class Sitemap extends Module
+class Sitemap extends \yii\base\Component
 {
     const ALWAYS = 'always';
     const HOURLY = 'hourly';
