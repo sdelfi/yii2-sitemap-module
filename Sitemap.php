@@ -28,16 +28,8 @@ class Sitemap extends \yii\base\Component
     const YEARLY = 'yearly';
     const NEVER = 'never';
 
-    public $controllerNamespace = 'himiklab\sitemap\controllers';
-
     /** @var int */
     public $cacheExpire = 86400;
-
-    /** @var Cache|string */
-    public $cacheProvider = 'cache';
-
-    /** @var string */
-    public $cacheKey = 'sitemap';
 
     /** @var boolean Use php's gzip compressing. */
     public $enableGzip = false;
