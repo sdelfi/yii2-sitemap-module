@@ -44,14 +44,6 @@ use yii\base\InvalidConfigException;
  */
 class SitemapBehavior extends Behavior
 {
-    const CHANGEFREQ_ALWAYS = 'always';
-    const CHANGEFREQ_HOURLY = 'hourly';
-    const CHANGEFREQ_DAILY = 'daily';
-    const CHANGEFREQ_WEEKLY = 'weekly';
-    const CHANGEFREQ_MONTHLY = 'monthly';
-    const CHANGEFREQ_YEARLY = 'yearly';
-    const CHANGEFREQ_NEVER = 'never';
-
     const BATCH_MAX_SIZE = 100;
 
     /** @var callable */
