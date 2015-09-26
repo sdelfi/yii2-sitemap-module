@@ -90,4 +90,22 @@ class Sitemap extends \yii\base\Component
 
         return $sitemapData;
     }
+
+    /**
+     * Convert date to W3C format
+     *
+     * @param mixed $date
+     * @static
+     * @access protected
+     * @return string
+     */
+    public static function dateToW3C($date)
+    {
+        if (is_int($date)) {
+            return date(DATE_W3C, $date);
+        } else {
+            return date(DATE_W3C, strtotime($date));
+        }
+    }
+
 }
