@@ -76,7 +76,6 @@ class SitemapBehavior extends Behavior
     public function generateSiteMap()
     {
         $result = [];
-        $n = 0;
 
         /** @var \yii\db\ActiveRecord $owner */
         $owner = $this->owner;
@@ -86,35 +85,22 @@ class SitemapBehavior extends Behavior
         }
 
         foreach ($query->each(self::BATCH_MAX_SIZE) as $model) {
+
             $urlData = call_user_func($this->dataClosure, $model);
 
             if (empty($urlData)) {
                 continue;
             }
 
-            $result[$n]['loc'] = $urlData['loc'];
-            $result[$n]['lastmod'] = $urlData['lastmod'];
-
-            if (isset($urlData['changefreq'])) {
-                $result[$n]['changefreq'] = $urlData['changefreq'];
-            } elseif ($this->defaultChangefreq !== false) {
-                $result[$n]['changefreq'] = $this->defaultChangefreq;
+            if (!isset($urlData['changefreq']) && ($this->defaultChangefreq !== false)) {
+                $urlData['changefreq'] = $this->defaultChangefreq;
             }
 
-            if (isset($urlData['priority'])) {
-                $result[$n]['priority'] = $urlData['priority'];
-            } elseif ($this->defaultPriority !== false) {
-                $result[$n]['priority'] = $this->defaultPriority;
+            if (!isset($urlData['priority']) && ($this->defaultPriority !== false)) {
+                $urlData['priority'] = $this->defaultPriority;
             }
 
-            if (isset($urlData['news'])) {
-                $result[$n]['news'] = $urlData['news'];
-            }
-            if (isset($urlData['images'])) {
-                $result[$n]['images'] = $urlData['images'];
-            }
-
-            ++$n;
+            $result[] = $urlData;
         }
         return $result;
     }
