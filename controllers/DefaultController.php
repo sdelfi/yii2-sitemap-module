@@ -16,14 +16,23 @@ use yii\web\Controller;
  */
 class DefaultController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'pageCache' => [
+                'class' => 'yii\filters\PageCache',
+                'only' => ['index'],
+                'duration' => \Yii::$app->params['cacheExpire'],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         /** @var \himiklab\sitemap\Sitemap $module */
         $module = Yii::$app->sitemap;
 
-        if (!$sitemapData = $module->cacheProvider->get($module->cacheKey)) {
-            $sitemapData = $module->buildSitemap();
-        }
+        $sitemapData = $module->buildSitemap();
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
