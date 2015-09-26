@@ -48,19 +48,6 @@ class Sitemap extends \yii\base\Component
     /** @var array */
     public $urls = [];
 
-    public function init()
-    {
-        parent::init();
-
-        if (is_string($this->cacheProvider)) {
-            $this->cacheProvider = Yii::$app->{$this->cacheProvider};
-        }
-
-        if (!$this->cacheProvider instanceof Cache) {
-            throw new InvalidConfigException('Invalid `cacheKey` parameter was specified.');
-        }
-    }
-
     /**
      * Build site map.
      * @return string
