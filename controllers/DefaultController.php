@@ -29,20 +29,17 @@ class DefaultController extends Controller
 
     public function actionIndex()
     {
-        /** @var \himiklab\sitemap\Sitemap $module */
-        $module = Yii::$app->sitemap;
-
-        $sitemapData = $module->buildSitemap();
+        $sitemap = Yii::$app->sitemap->buildSitemap();
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'application/xml');
         if ($module->enableGzip) {
-            $sitemapData = gzencode($sitemapData);
+            $sitemap = gzencode($sitemap);
             $headers->add('Content-Encoding', 'gzip');
-            $headers->add('Content-Length', strlen($sitemapData));
+            $headers->add('Content-Length', strlen($sitemap));
         }
-        return $sitemapData;
+        return $sitemap;
     }
 
     public function actionRobotsTxt()
