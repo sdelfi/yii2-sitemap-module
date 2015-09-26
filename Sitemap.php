@@ -9,8 +9,8 @@ namespace assayerpro\sitemap;
 
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\base\Module;
 use yii\caching\Cache;
+use yii\helpers\Url;
 
 /**
  * Yii2 module for automatically generating XML Sitemap.
@@ -62,13 +62,13 @@ class Sitemap extends \yii\base\Component
     }
 
     /**
-     * Build and cache a site map.
+     * Build site map.
      * @return string
-     * @throws \yii\base\InvalidConfigException
      */
     public function buildSitemap()
     {
         $urls = $this->urls;
+
         foreach ($this->models as $modelName) {
             /** @var behaviors\SitemapBehavior $model */
             if (is_array($modelName)) {
@@ -79,16 +79,30 @@ class Sitemap extends \yii\base\Component
             } else {
                 $model = new $modelName;
             }
-
             $urls = array_merge($urls, $model->generateSiteMap());
         }
+        $urls = array_map(function ($item) {
+            $item['loc'] = Url::to($item['loc'], true);
+            if (isset($item['lastmod'])) {
+                $item['lastmod'] = Sitemap::dateToW3C($item['lastmod']);
+            }
+            return $item;
+        }, $urls);
 
-        $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
-            'urls' => $urls
-        ]);
-        $this->cacheProvider->set($this->cacheKey, $sitemapData, $this->cacheExpire);
-
-        return $sitemapData;
+        $dom = new \DOMDocument('1.0', 'utf-8');
+        $urlset = $dom->createElement('urlset');
+        $urlset->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+        foreach ($urls as $urlItem) {
+            $url = $dom->createElement('url');
+            foreach ($urlItem as $key => $value) {
+                $elem = $dom->createElement($key);
+                $elem->appendChild($dom->createTextNode($value));
+                $url->appendChild($elem);
+            }
+            $urlset->appendChild($url);
+        }
+        $dom->appendChild($urlset);
+        return $dom->saveXML();
     }
 
     /**
