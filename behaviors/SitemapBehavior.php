@@ -1,8 +1,13 @@
 <?php
 /**
- * @link https://github.com/himiklab/yii2-sitemap-module
- * @copyright Copyright (c) 2014 HimikLab
+ * Behavior for XML Sitemap Yii2 module.
+ *
+ * @author Serge Larin <serge.larin@gmail.com>
+ * @link https://github.com/assayer-pro/yii2-sitemap-module
+ * @copyright 2015 Assayer Pro Company
  * @license http://opensource.org/licenses/MIT MIT
+ *
+ * based on https://github.com/himiklab/yii2-sitemap-module
  */
 
 namespace assayerpro\sitemap\behaviors;
@@ -27,9 +32,9 @@ use yii\base\InvalidConfigException;
  *           },
  *           'dataClosure' => function ($model) {
  *              return [
- *                  'loc' => Url::to($model->url, true),
- *                  'lastmod' => strtotime($model->lastmod),
- *                  'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
+ *                  'loc' => yii\helpers\Url::to($model->url, true),
+ *                  'lastmod' => Sitemap::dateToW3C($model->lastmod),
+ *                  'changefreq' => Sitemap::DAILY,
  *                  'priority' => 0.8
  *              ];
  *          }
