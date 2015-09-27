@@ -9,13 +9,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 * Either run
 
 ```
-php composer.phar require --prefer-dist "himiklab/yii2-sitemap-module" "*"
+php composer.phar require --prefer-dist "assayerpro/yii2-sitemap-module" "*"
 ```
 
 or add
 
 ```json
-"himiklab/yii2-sitemap-module" : "*"
+"assayerpro/yii2-sitemap-module" : "*"
 ```
 
 to the `require` section of your application's `composer.json` file.
@@ -35,7 +35,18 @@ to the `require` section of your application's `composer.json` file.
 ```php
 'modules' => [
     'sitemap' => [
-        'class' => 'himiklab\sitemap\Sitemap',
+        'class' => 'assayerpro\sitemap\Sitemap',
+    ],
+...
+],
+```
+
+* Add confuguration for sitemap into components section:
+
+```php
+'components' => [
+    'sitemap' => [
+        'class' => 'assayerpro\sitemap\Sitemap',
         'models' => [
             // your models
             'app\modules\news\models\News',
@@ -43,31 +54,31 @@ to the `require` section of your application's `composer.json` file.
             [
                 'class' => 'app\modules\news\models\News',
                 'behaviors' => [
-					'sitemap' => [
-						'class' => SitemapBehavior::className(),
-						'scope' => function ($model) {
-						    /** @var \yii\db\ActiveQuery $model */
-						    $model->select(['url', 'lastmod']);
-						    $model->andWhere(['is_deleted' => 0]);
-						},
-						'dataClosure' => function ($model) {
-						    /** @var self $model */
-						    return [
-						        'loc' => Url::to($model->url, true),
-						        'lastmod' => strtotime($model->lastmod),
-						        'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
-						        'priority' => 0.8
-						    ];
-						}
-					],
+                    'sitemap' => [
+                        'class' => SitemapBehavior::className(),
+                        'scope' => function ($model) {
+                            /** @var \yii\db\ActiveQuery $model */
+                            $model->select(['url', 'lastmod']);
+                            $model->andWhere(['is_deleted' => 0]);
+                        },
+                        'dataClosure' => function ($model) {
+                            /** @var self $model */
+                            return [
+                                'loc' => Url::to($model->url, true),
+                                'lastmod' => strtotime($model->lastmod),
+                                'changefreq' => Sitemap::DAILY,
+                                'priority' => 0.8
+                            ];
+                        }
+                    ],
                 ],
             ],
         ],
         'urls'=> [
             // your additional urls
             [
-                'loc' => '/news/index',
-                'changefreq' => \himiklab\sitemap\behaviors\SitemapBehavior::CHANGEFREQ_DAILY,
+                'loc' => ['/news/default/index'],
+                'changefreq' => \assayerpro\sitemap\behaviors\Sitemap::DAILY,
                 'priority' => 0.8,
                 'news' => [
                     'publication'   => [
@@ -101,7 +112,7 @@ to the `require` section of your application's `composer.json` file.
 * Add behavior in the AR models, for example:
 
 ```php
-use himiklab\sitemap\behaviors\SitemapBehavior;
+use asayerpro\sitemap\behaviors\SitemapBehavior;
 
 public function behaviors()
 {
@@ -118,7 +129,7 @@ public function behaviors()
                 return [
                     'loc' => Url::to($model->url, true),
                     'lastmod' => strtotime($model->lastmod),
-                    'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
+                    'changefreq' => Sitemap::DAILY,
                     'priority' => 0.8
                 ];
             }
