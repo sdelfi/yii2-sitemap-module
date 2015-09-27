@@ -34,7 +34,7 @@ class DefaultController extends Controller
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'application/xml');
-        if ($module->enableGzip) {
+        if (Yii::$app->sitemap->enableGzip) {
             $sitemap = gzencode($sitemap);
             $headers->add('Content-Encoding', 'gzip');
             $headers->add('Content-Length', strlen($sitemap));
