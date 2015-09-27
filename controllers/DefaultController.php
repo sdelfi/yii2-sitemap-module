@@ -29,7 +29,7 @@ class DefaultController extends Controller
 
     public function actionIndex()
     {
-        $sitemap = Yii::$app->sitemap->buildSitemap();
+        $sitemap = Yii::$app->sitemap->render();
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;

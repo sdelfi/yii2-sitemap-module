@@ -44,7 +44,7 @@ class Sitemap extends \yii\base\Component
      * Build site map.
      * @return string
      */
-    public function buildSitemap()
+    public function render()
     {
         $urls = $this->urls;
 
