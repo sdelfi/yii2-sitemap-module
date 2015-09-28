@@ -1,11 +1,16 @@
 <?php
 /**
- * @link https://github.com/himiklab/yii2-sitemap-module
- * @copyright Copyright (c) 2014 HimikLab
+ * Behavior for XML Sitemap Yii2 module.
+ *
+ * @author Serge Larin <serge.larin@gmail.com>
+ * @link https://github.com/assayer-pro/yii2-sitemap-module
+ * @copyright 2015 Assayer Pro Company
  * @license http://opensource.org/licenses/MIT MIT
+ *
+ * based on https://github.com/himiklab/yii2-sitemap-module
  */
 
-namespace himiklab\sitemap\behaviors;
+namespace assayerpro\sitemap\behaviors;
 
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
@@ -27,9 +32,9 @@ use yii\base\InvalidConfigException;
  *           },
  *           'dataClosure' => function ($model) {
  *              return [
- *                  'loc' => Url::to($model->url, true),
- *                  'lastmod' => strtotime($model->lastmod),
- *                  'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
+ *                  'loc' => yii\helpers\Url::to($model->url, true),
+ *                  'lastmod' => Sitemap::dateToW3C($model->lastmod),
+ *                  'changefreq' => Sitemap::DAILY,
  *                  'priority' => 0.8
  *              ];
  *          }
@@ -39,33 +44,29 @@ use yii\base\InvalidConfigException;
  * ```
  *
  * @see http://www.sitemaps.org/protocol.html
+ * @author Serge Larin <serge.larin@gmail.com>
  * @author HimikLab
- * @package himiklab\sitemap
+ * @package assayerpro\sitemap
  */
 class SitemapBehavior extends Behavior
 {
-    const CHANGEFREQ_ALWAYS = 'always';
-    const CHANGEFREQ_HOURLY = 'hourly';
-    const CHANGEFREQ_DAILY = 'daily';
-    const CHANGEFREQ_WEEKLY = 'weekly';
-    const CHANGEFREQ_MONTHLY = 'monthly';
-    const CHANGEFREQ_YEARLY = 'yearly';
-    const CHANGEFREQ_NEVER = 'never';
-
     const BATCH_MAX_SIZE = 100;
 
-    /** @var callable */
+    /** @var callable function generate url array for model */
     public $dataClosure;
 
-    /** @var string|bool */
+    /** @var string|bool default time for model change frequency */
     public $defaultChangefreq = false;
 
-    /** @var float|bool */
+    /** @var float|bool  default priority for model */
     public $defaultPriority = false;
 
-    /** @var callable */
+    /** @var callable function for model filter */
     public $scope;
 
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         if (!is_callable($this->dataClosure)) {
@@ -73,10 +74,15 @@ class SitemapBehavior extends Behavior
         }
     }
 
+    /**
+     * generate sitemap structure for model
+     *
+     * @access public
+     * @return array
+     */
     public function generateSiteMap()
     {
         $result = [];
-        $n = 0;
 
         /** @var \yii\db\ActiveRecord $owner */
         $owner = $this->owner;
@@ -86,35 +92,22 @@ class SitemapBehavior extends Behavior
         }
 
         foreach ($query->each(self::BATCH_MAX_SIZE) as $model) {
+
             $urlData = call_user_func($this->dataClosure, $model);
 
             if (empty($urlData)) {
                 continue;
             }
 
-            $result[$n]['loc'] = $urlData['loc'];
-            $result[$n]['lastmod'] = $urlData['lastmod'];
-
-            if (isset($urlData['changefreq'])) {
-                $result[$n]['changefreq'] = $urlData['changefreq'];
-            } elseif ($this->defaultChangefreq !== false) {
-                $result[$n]['changefreq'] = $this->defaultChangefreq;
+            if (!isset($urlData['changefreq']) && ($this->defaultChangefreq !== false)) {
+                $urlData['changefreq'] = $this->defaultChangefreq;
             }
 
-            if (isset($urlData['priority'])) {
-                $result[$n]['priority'] = $urlData['priority'];
-            } elseif ($this->defaultPriority !== false) {
-                $result[$n]['priority'] = $this->defaultPriority;
+            if (!isset($urlData['priority']) && ($this->defaultPriority !== false)) {
+                $urlData['priority'] = $this->defaultPriority;
             }
 
-            if (isset($urlData['news'])) {
-                $result[$n]['news'] = $urlData['news'];
-            }
-            if (isset($urlData['images'])) {
-                $result[$n]['images'] = $urlData['images'];
-            }
-
-            ++$n;
+            $result[] = $urlData;
         }
         return $result;
     }

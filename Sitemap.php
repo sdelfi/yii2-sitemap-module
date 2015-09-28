@@ -1,66 +1,110 @@
 <?php
 /**
+ * Yii2 module for automatically generating XML Sitemap.
+ *
  * @link https://github.com/himiklab/yii2-sitemap-module
+ * @author Serge Larin <serge.larin@gmail.com>
+ * @author HimikLab
+ * @copyright 2015 Assayer Pro Company
  * @copyright Copyright (c) 2014 HimikLab
  * @license http://opensource.org/licenses/MIT MIT
+ *
+ * based on https://github.com/himiklab/yii2-sitemap-module
  */
 
-namespace himiklab\sitemap;
+namespace assayerpro\sitemap;
 
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\base\Module;
 use yii\caching\Cache;
+use yii\helpers\Url;
 
 /**
  * Yii2 module for automatically generating XML Sitemap.
  *
+ * @author Serge Larin <serge.larin@gmail.com>
  * @author HimikLab
- * @package himiklab\sitemap
+ * @package assayerpro\sitemap
  */
-class Sitemap extends Module
+class Sitemap extends \yii\base\Component
 {
-    public $controllerNamespace = 'himiklab\sitemap\controllers';
+    const ALWAYS = 'always';
+    const HOURLY = 'hourly';
+    const DAILY = 'daily';
+    const WEEKLY = 'weekly';
+    const MONTHLY = 'monthly';
+    const YEARLY = 'yearly';
+    const NEVER = 'never';
+    const SCHEMAS = [
+        'xmlns' => 'http://www.sitemaps.org/schemas/sitemap/0.9',
+        'xmlns:image' => 'http://www.google.com/schemas/sitemap-image/1.1',
+        'xmlns:news' => 'http://www.google.com/schemas/sitemap-news/0.9',
+    ];
 
-    /** @var int */
+    /** @var int Cache expiration time */
     public $cacheExpire = 86400;
-
-    /** @var Cache|string */
-    public $cacheProvider = 'cache';
-
-    /** @var string */
-    public $cacheKey = 'sitemap';
 
     /** @var boolean Use php's gzip compressing. */
     public $enableGzip = false;
 
-    /** @var array */
+    /** @var array Model list for sitemap */
     public $models = [];
 
-    /** @var array */
+    /** @var array Url list for sitemap */
     public $urls = [];
 
-    public function init()
+    /**
+     * Build site map.
+     * @return string
+     */
+    public function render()
     {
-        parent::init();
-
-        if (is_string($this->cacheProvider)) {
-            $this->cacheProvider = Yii::$app->{$this->cacheProvider};
+        $urls = $this->generateUrls();
+        $dom = new \DOMDocument('1.0', Yii::$app->charset);
+        $urlset = $dom->createElement('urlset');
+        foreach (static::SCHEMAS as $attr => $schemaUrl) {
+            $urlset->setAttribute($attr, $schemaUrl);
         }
-
-        if (!$this->cacheProvider instanceof Cache) {
-            throw new InvalidConfigException('Invalid `cacheKey` parameter was specified.');
+        foreach ($urls as $urlItem) {
+            $url = $dom->createElement('url');
+            foreach ($urlItem as $urlKey => $urlValue) {
+                if (is_array($urlValue)) {
+                    switch ($urlKey) {
+                        case 'news':
+                            $namespace = 'news:';
+                            $elem = $dom->createElement($namespace.$urlKey);
+                            $url->appendChild(static::hashToXML($urlValue, $elem, $dom, $namespace));
+                            break;
+                        case 'images':
+                            $namespace = 'image:';
+                            foreach ($urlValue as $image) {
+                                $elem = $dom->createElement($namespace.'image');
+                                $url->appendChild(static::hashToXML($image, $elem, $dom, $namespace));
+                            }
+                            break;
+                    }
+                } else {
+                    $elem = $dom->createElement($urlKey);
+                    $elem->appendChild($dom->createTextNode($urlValue));
+                    $url->appendChild($elem);
+                }
+            }
+            $urlset->appendChild($url);
         }
+        $dom->appendChild($urlset);
+        return $dom->saveXML();
     }
 
     /**
-     * Build and cache a site map.
-     * @return string
-     * @throws \yii\base\InvalidConfigException
+     * Generate url's array from properties $url and $models
+     *
+     * @access protected
+     * @return array
      */
-    public function buildSitemap()
+    protected function generateUrls()
     {
         $urls = $this->urls;
+
         foreach ($this->models as $modelName) {
             /** @var behaviors\SitemapBehavior $model */
             if (is_array($modelName)) {
@@ -71,15 +115,63 @@ class Sitemap extends Module
             } else {
                 $model = new $modelName;
             }
-
             $urls = array_merge($urls, $model->generateSiteMap());
         }
+        $urls = array_map(function ($item) {
+            $item['loc'] = Url::to($item['loc'], true);
+            if (isset($item['lastmod'])) {
+                $item['lastmod'] = Sitemap::dateToW3C($item['lastmod']);
+            }
+            if (isset($item['images'])) {
+                $item['images'] = array_map(function ($image) {
+                    $image['loc'] = Url::to($image['loc'], true);
+                    return $image;
+                }, $item['images']);
+            }
+            return $item;
+        }, $urls);
 
-        $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
-            'urls' => $urls
-        ]);
-        $this->cacheProvider->set($this->cacheKey, $sitemapData, $this->cacheExpire);
+        return $urls;
+    }
 
-        return $sitemapData;
+    /**
+     * Convert associative arrays to XML
+     *
+     * @param array $hash
+     * @param \DOMElement $node
+     * @param \DOMDocument $dom
+     * @param string $namespace
+     * @static
+     * @access protected
+     * @return \DOMElement
+     */
+    protected static function hashToXML($hash, $node, $dom, $namespace = '')
+    {
+        foreach ($hash as $key => $value) {
+            $elem = $dom->createElement($namespace.$key);
+            if (is_array($value)) {
+                $elem = static::hashToXML($value, $elem, $dom, $namespace);
+            } else {
+                $elem->appendChild($dom->createTextNode($value));
+            }
+            $node->appendChild($elem);
+        }
+        return $node;
+    }
+    /**
+     * Convert date to W3C format
+     *
+     * @param mixed $date
+     * @static
+     * @access protected
+     * @return string
+     */
+    public static function dateToW3C($date)
+    {
+        if (is_int($date)) {
+            return date(DATE_W3C, $date);
+        } else {
+            return date(DATE_W3C, strtotime($date));
+        }
     }
 }
