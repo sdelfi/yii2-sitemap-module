@@ -63,34 +63,15 @@ class Sitemap extends \yii\base\Component
                 if (is_array($urlValue)) {
                     switch ($urlKey) {
                         case 'news':
-                            $nameSpace = 'news:';
-                            $elem = $dom->createElement($nameSpace.$urlKey);
-                            foreach ($urlValue as $subKey => $subValue) {
-                                $subElem = $dom->createElement($nameSpace.$subKey);
-                                if (is_array($subValue)){
-                                    foreach ($subValue as $sub2Key => $sub2Value) {
-                                        $sub2Elem = $dom->createElement($nameSpace.$sub2Key);
-                                        $sub2Elem->appendChild($dom->createTextNode($sub2Value));
-                                        $subElem->appendChild($sub2Elem);
-                                    }
-
-                                } else {
-                                    $subElem->appendChild($dom->createTextNode($subValue));
-                                }
-                                $elem->appendChild($subElem);
-                            }
-                            $url->appendChild($elem);
+                            $namespace = 'news:';
+                            $elem = $dom->createElement($namespace.$urlKey);
+                            $url->appendChild(static::hashToXML($urlValue, $elem, $dom, $namespace));
                             break;
                         case 'images':
-                            $nameSpace = 'image:';
+                            $namespace = 'image:';
                             foreach ($urlValue as $image) {
-                                $elem = $dom->createElement($nameSpace.'image');
-                                foreach ($image as $imgKey => $imgValue) {
-                                    $img = $dom->createElement($nameSpace.$imgKey);
-                                    $img->appendChild($dom->createTextNode($imgValue));
-                                    $elem->appendChild($img);
-                                }
-                                $url->appendChild($elem);
+                                $elem = $dom->createElement($namespace.'image');
+                                $url->appendChild(static::hashToXML($image, $elem, $dom, $namespace));
                             }
                             break;
                     }
@@ -145,6 +126,30 @@ class Sitemap extends \yii\base\Component
         return $urls;
     }
 
+    /**
+     * Convert associative arrays to XML
+     *
+     * @param array $hash
+     * @param \DOMElement $node
+     * @param \DOMDocument $dom
+     * @param string $namespace
+     * @static
+     * @access protected
+     * @return \DOMElement
+     */
+    protected static function hashToXML($hash, $node, $dom, $namespace = '')
+    {
+        foreach ($hash as $key => $value) {
+            $elem = $dom->createElement($namespace.$key);
+            if (is_array($value)) {
+                $elem = static::hashToXML($value, $elem, $dom, $namespace);
+            } else {
+                $elem->appendChild($dom->createTextNode($value));
+            }
+            $node->appendChild($elem);
+        }
+        return $node;
+    }
     /**
      * Convert date to W3C format
      *
