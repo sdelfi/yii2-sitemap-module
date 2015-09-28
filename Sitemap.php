@@ -54,7 +54,7 @@ class Sitemap extends \yii\base\Component
         $urls = $this->generateUrls();
         $dom = new \DOMDocument('1.0', Yii::$app->charset);
         $urlset = $dom->createElement('urlset');
-        foreach (static::SCHEMAS as $attr => $schemaUrl ) {
+        foreach (static::SCHEMAS as $attr => $schemaUrl) {
             $urlset->setAttribute($attr, $schemaUrl);
         }
         foreach ($urls as $urlItem) {
@@ -166,5 +166,4 @@ class Sitemap extends \yii\base\Component
             return date(DATE_W3C, strtotime($date));
         }
     }
-
 }
