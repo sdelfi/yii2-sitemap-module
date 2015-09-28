@@ -44,6 +44,7 @@ use yii\base\InvalidConfigException;
  * ```
  *
  * @see http://www.sitemaps.org/protocol.html
+ * @author Serge Larin <serge.larin@gmail.com>
  * @author HimikLab
  * @package assayerpro\sitemap
  */
@@ -51,18 +52,21 @@ class SitemapBehavior extends Behavior
 {
     const BATCH_MAX_SIZE = 100;
 
-    /** @var callable */
+    /** @var callable function generate url array for model */
     public $dataClosure;
 
-    /** @var string|bool */
+    /** @var string|bool default time for model change frequency */
     public $defaultChangefreq = false;
 
-    /** @var float|bool */
+    /** @var float|bool  default priority for model */
     public $defaultPriority = false;
 
-    /** @var callable */
+    /** @var callable function for model filter */
     public $scope;
 
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         if (!is_callable($this->dataClosure)) {
@@ -70,6 +74,12 @@ class SitemapBehavior extends Behavior
         }
     }
 
+    /**
+     * generate sitemap structure for model
+     *
+     * @access public
+     * @return array
+     */
     public function generateSiteMap()
     {
         $result = [];

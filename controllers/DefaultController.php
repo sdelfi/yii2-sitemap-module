@@ -1,6 +1,11 @@
 <?php
 /**
+ * DefaultController for sitemap module
+ *
  * @link https://github.com/himiklab/yii2-sitemap-module
+ * @author Serge Larin <serge.larin@gmail.com>
+ * @author HimikLab
+ * @copyright 2015 Assayer Pro Company
  * @copyright Copyright (c) 2014 HimikLab
  * @license http://opensource.org/licenses/MIT MIT
  */
@@ -11,11 +16,17 @@ use Yii;
 use yii\web\Controller;
 
 /**
+ * DefaultController for sitemap module
+ *
+ * @author Serge Larin <serge.larin@gmail.com>
  * @author HimikLab
- * @package himiklab\sitemap
+ * @package assayerpro\sitemap
  */
 class DefaultController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -27,6 +38,12 @@ class DefaultController extends Controller
         ];
     }
 
+    /**
+     * Action for sitemap/default/index
+     *
+     * @access public
+     * @return string
+     */
     public function actionIndex()
     {
         $sitemap = Yii::$app->sitemap->render();
@@ -42,6 +59,12 @@ class DefaultController extends Controller
         return $sitemap;
     }
 
+    /**
+     * Action for sitemap/default/robot-txt
+     *
+     * @access public
+     * @return string
+     */
     public function actionRobotsTxt()
     {
         \Yii::$app->response->format = 'txt';

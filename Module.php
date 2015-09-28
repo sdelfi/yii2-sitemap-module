@@ -12,14 +12,24 @@
 namespace assayerpro\sitemap;
 
 /**
- * Class Module
+ * Class Module for sitemap
  *
+ * @author Serge Larin <serge.larin@gmail.com>
  * @package app\modules\webmaster
  */
 class Module extends \yii\base\Module
 {
+    /**
+     * The namespace that controller classes are in.
+     *
+     * @var string
+     * @access public
+     */
     public $controllerNamespace = 'assayerpro\sitemap\controllers';
 
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();

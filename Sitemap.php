@@ -1,8 +1,15 @@
 <?php
 /**
+ * Yii2 module for automatically generating XML Sitemap.
+ *
  * @link https://github.com/himiklab/yii2-sitemap-module
+ * @author Serge Larin <serge.larin@gmail.com>
+ * @author HimikLab
+ * @copyright 2015 Assayer Pro Company
  * @copyright Copyright (c) 2014 HimikLab
  * @license http://opensource.org/licenses/MIT MIT
+ *
+ * based on https://github.com/himiklab/yii2-sitemap-module
  */
 
 namespace assayerpro\sitemap;
@@ -15,8 +22,9 @@ use yii\helpers\Url;
 /**
  * Yii2 module for automatically generating XML Sitemap.
  *
+ * @author Serge Larin <serge.larin@gmail.com>
  * @author HimikLab
- * @package himiklab\sitemap
+ * @package assayerpro\sitemap
  */
 class Sitemap extends \yii\base\Component
 {
@@ -33,16 +41,16 @@ class Sitemap extends \yii\base\Component
         'xmlns:news' => 'http://www.google.com/schemas/sitemap-news/0.9',
     ];
 
-    /** @var int */
+    /** @var int Cache expiration time */
     public $cacheExpire = 86400;
 
     /** @var boolean Use php's gzip compressing. */
     public $enableGzip = false;
 
-    /** @var array */
+    /** @var array Model list for sitemap */
     public $models = [];
 
-    /** @var array */
+    /** @var array Url list for sitemap */
     public $urls = [];
 
     /**
