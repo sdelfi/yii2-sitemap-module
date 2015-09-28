@@ -27,6 +27,11 @@ class Sitemap extends \yii\base\Component
     const MONTHLY = 'monthly';
     const YEARLY = 'yearly';
     const NEVER = 'never';
+    const SCHEMAS = [
+        'xmlns' => 'http://www.sitemaps.org/schemas/sitemap/0.9',
+        'xmlns:image' => 'http://www.google.com/schemas/sitemap-image/1.1',
+        'xmlns:news' => 'http://www.google.com/schemas/sitemap-news/0.9',
+    ];
 
     /** @var int */
     public $cacheExpire = 86400;
@@ -76,9 +81,9 @@ class Sitemap extends \yii\base\Component
 
         $dom = new \DOMDocument('1.0', Yii::$app->charset);
         $urlset = $dom->createElement('urlset');
-        $urlset->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-        $urlset->setAttribute('xmlns:image', 'http://www.google.com/schemas/sitemap-image/1.1');
-        $urlset->setAttribute('xmlns:news', 'http://www.google.com/schemas/sitemap-news/0.9');
+        foreach (static::SCHEMAS as $attr => $schemaUrl ) {
+            $urlset->setAttribute($attr, $schemaUrl);
+        }
         foreach ($urls as $urlItem) {
             $url = $dom->createElement('url');
             foreach ($urlItem as $urlKey => $urlValue) {
