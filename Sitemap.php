@@ -65,18 +65,62 @@ class Sitemap extends \yii\base\Component
             if (isset($item['lastmod'])) {
                 $item['lastmod'] = Sitemap::dateToW3C($item['lastmod']);
             }
+            if (isset($item['images'])) {
+               $item['images'] = array_map(function ($image) {
+                   $image['loc'] = Url::to($image['loc'], true);
+                   return $image;
+               }, $item['images']);
+            }
             return $item;
         }, $urls);
 
         $dom = new \DOMDocument('1.0', 'utf-8');
         $urlset = $dom->createElement('urlset');
         $urlset->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+        $urlset->setAttribute('xmlns:image', 'http://www.google.com/schemas/sitemap-image/1.1');
+        $urlset->setAttribute('xmlns:news', 'http://www.google.com/schemas/sitemap-news/0.9');
         foreach ($urls as $urlItem) {
             $url = $dom->createElement('url');
-            foreach ($urlItem as $key => $value) {
-                $elem = $dom->createElement($key);
-                $elem->appendChild($dom->createTextNode($value));
-                $url->appendChild($elem);
+            foreach ($urlItem as $urlKey => $urlValue) {
+                if (is_array($urlValue)) {
+                    switch ($urlKey) {
+                        case 'news':
+                            $nameSpace = 'news:';
+                            $elem = $dom->createElement($nameSpace.$urlKey);
+                            foreach ($urlValue as $subKey => $subValue) {
+                                $subElem = $dom->createElement($nameSpace.$subKey);
+                                if (is_array($subValue)){
+                                    foreach ($subValue as $sub2Key => $sub2Value) {
+                                        $sub2Elem = $dom->createElement($nameSpace.$sub2Key);
+                                        $sub2Elem->appendChild($dom->createTextNode($sub2Value));
+                                        $subElem->appendChild($sub2Elem);
+                                    }
+
+                                } else {
+                                    $subElem->appendChild($dom->createTextNode($subValue));
+                                }
+                                $elem->appendChild($subElem);
+                            }
+                            $url->appendChild($elem);
+                            break;
+                        case 'images':
+                            $nameSpace = 'image:';
+                            foreach ($urlValue as $image) {
+                                $elem = $dom->createElement($nameSpace.'image');
+                                foreach ($image as $imgKey => $imgValue) {
+                                    $img = $dom->createElement($nameSpace.$imgKey);
+                                    $img->appendChild($dom->createTextNode($imgValue));
+                                    $elem->appendChild($img);
+                                }
+                                $url->appendChild($elem);
+                            }
+                            break;
+                    }
+                } else {
+                    $elem = $dom->createElement($urlKey);
+                    $elem->appendChild($dom->createTextNode($urlValue));
+                    $url->appendChild($elem);
+                }
             }
             $urlset->appendChild($url);
         }
