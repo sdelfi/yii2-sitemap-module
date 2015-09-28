@@ -51,34 +51,7 @@ class Sitemap extends \yii\base\Component
      */
     public function render()
     {
-        $urls = $this->urls;
-
-        foreach ($this->models as $modelName) {
-            /** @var behaviors\SitemapBehavior $model */
-            if (is_array($modelName)) {
-                $model = new $modelName['class'];
-                if (isset($modelName['behaviors'])) {
-                    $model->attachBehaviors($modelName['behaviors']);
-                }
-            } else {
-                $model = new $modelName;
-            }
-            $urls = array_merge($urls, $model->generateSiteMap());
-        }
-        $urls = array_map(function ($item) {
-            $item['loc'] = Url::to($item['loc'], true);
-            if (isset($item['lastmod'])) {
-                $item['lastmod'] = Sitemap::dateToW3C($item['lastmod']);
-            }
-            if (isset($item['images'])) {
-               $item['images'] = array_map(function ($image) {
-                   $image['loc'] = Url::to($image['loc'], true);
-                   return $image;
-               }, $item['images']);
-            }
-            return $item;
-        }, $urls);
-
+        $urls = $this->generateUrls();
         $dom = new \DOMDocument('1.0', Yii::$app->charset);
         $urlset = $dom->createElement('urlset');
         foreach (static::SCHEMAS as $attr => $schemaUrl ) {
@@ -131,6 +104,45 @@ class Sitemap extends \yii\base\Component
         }
         $dom->appendChild($urlset);
         return $dom->saveXML();
+    }
+
+    /**
+     * Generate url's array from properties $url and $models
+     *
+     * @access protected
+     * @return array
+     */
+    protected function generateUrls()
+    {
+        $urls = $this->urls;
+
+        foreach ($this->models as $modelName) {
+            /** @var behaviors\SitemapBehavior $model */
+            if (is_array($modelName)) {
+                $model = new $modelName['class'];
+                if (isset($modelName['behaviors'])) {
+                    $model->attachBehaviors($modelName['behaviors']);
+                }
+            } else {
+                $model = new $modelName;
+            }
+            $urls = array_merge($urls, $model->generateSiteMap());
+        }
+        $urls = array_map(function ($item) {
+            $item['loc'] = Url::to($item['loc'], true);
+            if (isset($item['lastmod'])) {
+                $item['lastmod'] = Sitemap::dateToW3C($item['lastmod']);
+            }
+            if (isset($item['images'])) {
+                $item['images'] = array_map(function ($image) {
+                    $image['loc'] = Url::to($image['loc'], true);
+                    return $image;
+                }, $item['images']);
+            }
+            return $item;
+        }, $urls);
+
+        return $urls;
     }
 
     /**
