@@ -74,7 +74,7 @@ class Sitemap extends \yii\base\Component
             return $item;
         }, $urls);
 
-        $dom = new \DOMDocument('1.0', 'utf-8');
+        $dom = new \DOMDocument('1.0', Yii::$app->charset);
         $urlset = $dom->createElement('urlset');
         $urlset->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
         $urlset->setAttribute('xmlns:image', 'http://www.google.com/schemas/sitemap-image/1.1');
