@@ -1,5 +1,8 @@
 XML Sitemap Module for Yii2
 ==========================
+
+[![PHP version](https://badge.fury.io/ph/assayer-pro%2Fyii2-sitemap-module.svg)](http://badge.fury.io/ph/assayer-pro%2Fyii2-sitemap-module)
+
 Yii2 module for automatically generating [XML Sitemap](http://www.sitemaps.org/protocol.html).
 
 Installation
