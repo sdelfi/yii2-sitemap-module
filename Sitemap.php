@@ -15,6 +15,7 @@
 namespace assayerpro\sitemap;
 
 use Yii;
+use XMLWriter;
 use yii\base\InvalidConfigException;
 use yii\caching\Cache;
 use yii\helpers\Url;
@@ -60,39 +61,43 @@ class Sitemap extends \yii\base\Component
     public function render()
     {
         $urls = $this->generateUrls();
-        $dom = new \DOMDocument('1.0', Yii::$app->charset);
-        $urlset = $dom->createElement('urlset');
+        $xml = new XMLWriter();
+        $xml->openMemory();
+        $xml->startDocument('1.0','UTF-8');
+        $xml->startElement('urlset');
         foreach (static::SCHEMAS as $attr => $schemaUrl) {
-            $urlset->setAttribute($attr, $schemaUrl);
+            $xml->writeAttribute($attr, $schemaUrl);
         }
         foreach ($urls as $urlItem) {
-            $url = $dom->createElement('url');
+            $xml->startElement('url');
             foreach ($urlItem as $urlKey => $urlValue) {
                 if (is_array($urlValue)) {
                     switch ($urlKey) {
                         case 'news':
                             $namespace = 'news:';
-                            $elem = $dom->createElement($namespace.$urlKey);
-                            $url->appendChild(static::hashToXML($urlValue, $elem, $dom, $namespace));
+                            $xml->startElement($namespace.$urlKey);
+                            static::hashToXML($urlValue, $xml, $namespace);
+                            $xml->endElement();
                             break;
                         case 'images':
                             $namespace = 'image:';
                             foreach ($urlValue as $image) {
-                                $elem = $dom->createElement($namespace.'image');
-                                $url->appendChild(static::hashToXML($image, $elem, $dom, $namespace));
+                                $xml->startElement($namespace.'image');
+                                static::hashToXML($image, $xml, $namespace);
+                                $xml->endElement();
                             }
                             break;
                     }
                 } else {
-                    $elem = $dom->createElement($urlKey);
-                    $elem->appendChild($dom->createTextNode($urlValue));
-                    $url->appendChild($elem);
+                    $xml->writeElement($urlKey, $urlValue);
                 }
             }
-            $urlset->appendChild($url);
+            $xml->endElement();
         }
-        $dom->appendChild($urlset);
-        return $dom->saveXML();
+
+        $xml->endElement(); // urlset
+        $xml->endElement(); // document
+        return $xml->outputMemory();
     }
 
     /**
@@ -138,25 +143,24 @@ class Sitemap extends \yii\base\Component
      * Convert associative arrays to XML
      *
      * @param array $hash
-     * @param \DOMElement $node
-     * @param \DOMDocument $dom
+     * @param XMLWriter $xml
      * @param string $namespace
      * @static
      * @access protected
-     * @return \DOMElement
+     * @return XMLWriter
      */
-    protected static function hashToXML($hash, $node, $dom, $namespace = '')
+    protected static function hashToXML($hash, $xml, $namespace = '')
     {
         foreach ($hash as $key => $value) {
-            $elem = $dom->createElement($namespace.$key);
+            $xml->startElement($namespace.$key);
             if (is_array($value)) {
-                $elem = static::hashToXML($value, $elem, $dom, $namespace);
+                static::hashToXML($value, $xml, $namespace);
             } else {
-                $elem->appendChild($dom->createTextNode($value));
+                $xml->text($value);
             }
-            $node->appendChild($elem);
+            $xml->endElement();
         }
-        return $node;
+        return $xml;
     }
     /**
      * Convert date to W3C format
