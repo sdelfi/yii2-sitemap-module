@@ -33,7 +33,7 @@ class DefaultController extends Controller
             'pageCache' => [
                 'class' => 'yii\filters\PageCache',
                 'only' => ['index', 'robots-txt'],
-                'duration' => \Yii::$app->params['cacheExpire'],
+                'duration' => \Yii::$app->sitemap->cacheExpire,
             ],
         ];
     }
