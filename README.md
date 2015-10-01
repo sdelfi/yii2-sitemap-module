@@ -150,6 +150,31 @@ public function behaviors()
     ],
 ],
 ```
+Console generate sitemap
+------------------------
+
+Remove sitemap section from modules configuration and rules for urlManager.
+
+Add console command configuration:
+```php
+    'controllerMap' => [
+        'sitemap' => [
+            'class' => 'assayerpro\sitemap\console\CreateController',
+        ],
+    ],
+```
+
+Add baseUrl for urlManager:
+```php
+     'urlManager' => [
+         'baseUrl' => 'http://example.com/',
+     ],
+```
+
+Run command from console:
+```sh
+$ ./yii sitemap/create
+```
 
 Resources
 ---------
