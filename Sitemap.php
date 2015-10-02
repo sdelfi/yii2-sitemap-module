@@ -45,6 +45,9 @@ class Sitemap extends \yii\base\Component
     /** @var int Cache expiration time */
     public $cacheExpire = 86400;
 
+    /** @var string Cache key */
+    public $cacheKey = 'sitemap';
+
     /** @var boolean Use php's gzip compressing. */
     public $enableGzip = false;
 
@@ -62,6 +65,10 @@ class Sitemap extends \yii\base\Component
      */
     public function render()
     {
+        $result = Yii::$app->cache->get($this->cacheKey);
+        if ($result) {
+            return $result;
+        }
         $urls = $this->generateUrls();
         $parts = ceil(count($urls)/$this->maxSectionUrl);
         if ($parts > 1) {
@@ -126,6 +133,7 @@ class Sitemap extends \yii\base\Component
             $result[0] = $result[1];
             unset($result[1]);
         }
+        Yii::$app->cache->set($this->cacheKey, $result, $this->cacheExpire);
         return $result;
     }
 
