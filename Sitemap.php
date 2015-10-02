@@ -54,50 +54,79 @@ class Sitemap extends \yii\base\Component
     /** @var array Url list for sitemap */
     public $urls = [];
 
+    /** @var int */
+    public $maxSectionUrl = 20000;
     /**
      * Build site map.
-     * @return string
+     * @return array
      */
     public function render()
     {
         $urls = $this->generateUrls();
-        $xml = new XMLWriter();
-        $xml->openMemory();
-        $xml->startDocument('1.0','UTF-8');
-        $xml->startElement('urlset');
-        foreach (static::SCHEMAS as $attr => $schemaUrl) {
-            $xml->writeAttribute($attr, $schemaUrl);
-        }
-        foreach ($urls as $urlItem) {
-            $xml->startElement('url');
-            foreach ($urlItem as $urlKey => $urlValue) {
-                if (is_array($urlValue)) {
-                    switch ($urlKey) {
-                        case 'news':
-                            $namespace = 'news:';
-                            $xml->startElement($namespace.$urlKey);
-                            static::hashToXML($urlValue, $xml, $namespace);
-                            $xml->endElement();
-                            break;
-                        case 'images':
-                            $namespace = 'image:';
-                            foreach ($urlValue as $image) {
-                                $xml->startElement($namespace.'image');
-                                static::hashToXML($image, $xml, $namespace);
-                                $xml->endElement();
-                            }
-                            break;
-                    }
-                } else {
-                    $xml->writeElement($urlKey, $urlValue);
-                }
+        $parts = ceil(count($urls)/$this->maxSectionUrl);
+        if ($parts > 1) {
+            $xml = new XMLWriter();
+            $xml->openMemory();
+            $xml->startDocument('1.0', 'UTF-8');
+            $xml->startElement('sitemapindex');
+            $xml->writeAttribute('xmlns', static::SCHEMAS['xmlns']);
+            for ($i = 1; $i <= $parts; $i++) {
+                $xml->startElement('sitemap');
+                $xml->writeElement('loc', Url::to(['/sitemap/default/index', 'id' =>$i], true));
+                $xml->writeElement('lastmod', static::dateToW3C(time()));
+                $xml->endElement();
+                $result[$i]['file'] = Url::to(['/sitemap/default/index', 'id' =>$i], false);
             }
             $xml->endElement();
+            $result[0]['xml'] = $xml->outputMemory();
+            $result[0]['file'] = Url::to(['/sitemap/default/index']);
+        }
+        $urlItem = 0;
+        for ($i=1; $i <= $parts; $i++) {
+            $xml = new XMLWriter();
+            $xml->openMemory();
+            $xml->startDocument('1.0', 'UTF-8');
+            $xml->startElement('urlset');
+            foreach (static::SCHEMAS as $attr => $schemaUrl) {
+                $xml->writeAttribute($attr, $schemaUrl);
+            }
+            for (; ($urlItem < $i*$this->maxSectionUrl) && ($urlItem < count($urls)); $urlItem++) {
+                $xml->startElement('url');
+                foreach ($urls[$urlItem] as $urlKey => $urlValue) {
+                    if (is_array($urlValue)) {
+                        switch ($urlKey) {
+                            case 'news':
+                                $namespace = 'news:';
+                                $xml->startElement($namespace.$urlKey);
+                                static::hashToXML($urlValue, $xml, $namespace);
+                                $xml->endElement();
+                                break;
+                            case 'images':
+                                $namespace = 'image:';
+                                foreach ($urlValue as $image) {
+                                    $xml->startElement($namespace.'image');
+                                    static::hashToXML($image, $xml, $namespace);
+                                    $xml->endElement();
+                                }
+                                break;
+                        }
+                    } else {
+                        $xml->writeElement($urlKey, $urlValue);
+                    }
+                }
+                $xml->endElement();
+            }
+
+            $xml->endElement(); // urlset
+            $xml->endElement(); // document
+            $result[$i]['xml'] = $xml->outputMemory();
         }
 
-        $xml->endElement(); // urlset
-        $xml->endElement(); // document
-        return $xml->outputMemory();
+        if ($parts == 1) {
+            $result[0] = $result[1];
+            unset($result[1]);
+        }
+        return $result;
     }
 
     /**
