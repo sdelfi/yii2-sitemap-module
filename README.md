@@ -146,6 +146,7 @@ public function behaviors()
 ```php
 'urlManager' => [
     'rules' => [
+        ['pattern' => 'sitemap-<id:\d+>', 'route' => '/sitemap/default/index', 'suffix' => '.xml'],
         ['pattern' => 'sitemap', 'route' => 'sitemap/default/index', 'suffix' => '.xml'],
     ],
 ],
