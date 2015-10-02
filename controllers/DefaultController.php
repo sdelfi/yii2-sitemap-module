@@ -14,6 +14,7 @@ namespace assayerpro\sitemap\controllers;
 
 use Yii;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 /**
  * DefaultController for sitemap module
@@ -34,6 +35,7 @@ class DefaultController extends Controller
                 'class' => 'yii\filters\PageCache',
                 'only' => ['index', 'robots-txt'],
                 'duration' => \Yii::$app->sitemap->cacheExpire,
+                'variations' => [ \Yii::$app->request->get('id')],
             ],
         ];
     }
@@ -44,9 +46,12 @@ class DefaultController extends Controller
      * @access public
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($id=0)
     {
         $sitemap = Yii::$app->sitemap->render();
+        if (empty($sitemap[$id])) {
+            throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
+        }
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
@@ -56,7 +61,7 @@ class DefaultController extends Controller
             $headers->add('Content-Encoding', 'gzip');
             $headers->add('Content-Length', strlen($sitemap));
         }
-        return $sitemap;
+        return $sitemap[$id]['xml'];
     }
 
     /**
