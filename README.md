@@ -167,7 +167,8 @@ Add console command configuration:
 Add baseUrl for urlManager:
 ```php
      'urlManager' => [
-         'baseUrl' => 'http://example.com/',
+         'baseUrl' => '',
+         'hostInfo' => 'http://example.com/',
      ],
 ```
 
