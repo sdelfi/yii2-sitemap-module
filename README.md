@@ -153,7 +153,7 @@ public function behaviors()
 Console generate sitemap
 ------------------------
 
-Remove sitemap section from modules configuration and rules for urlManager.
+Remove sitemap section from modules configuration.
 
 Add console command configuration:
 ```php
