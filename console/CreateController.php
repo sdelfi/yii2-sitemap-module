@@ -31,7 +31,7 @@ class CreateController extends Controller
      * Generate sitemap.xml file
      *
      * @access public
-     * @return string
+     * @return integer
      */
     public function actionCreate($file='@webroot/sitemap.xml')
     {
