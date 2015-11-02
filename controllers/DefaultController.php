@@ -15,6 +15,7 @@ namespace assayerpro\sitemap\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * DefaultController for sitemap module
@@ -34,8 +35,8 @@ class DefaultController extends Controller
             'pageCache' => [
                 'class' => 'yii\filters\PageCache',
                 'only' => ['index', 'robots-txt'],
-                'duration' => \Yii::$app->sitemap->cacheExpire,
-                'variations' => [ \Yii::$app->request->get('id')],
+                'duration' => Yii::$app->sitemap->cacheExpire,
+                'variations' => [ Yii::$app->request->get('id')],
             ],
         ];
     }
@@ -53,7 +54,7 @@ class DefaultController extends Controller
             throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
         }
 
-        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        Yii::$app->response->format = Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'application/xml');
         if (Yii::$app->sitemap->enableGzip) {
@@ -72,10 +73,10 @@ class DefaultController extends Controller
      */
     public function actionRobotsTxt()
     {
-        \Yii::$app->response->format = 'txt';
+        Yii::$app->response->format = 'txt';
         return $this->renderPartial('robots-txt', [
-            'host' => \Yii::$app->request->serverName,
-            'sitemap' => \Yii::$app->urlManager->createAbsoluteUrl([$this->module->id.'/'. $this->id .'/index']),
+            'host' => Yii::$app->request->hostInfo,
+            'sitemap' => Yii::$app->urlManager->createAbsoluteUrl([$this->module->id.'/'. $this->id .'/index']),
         ]);
     }
 }
