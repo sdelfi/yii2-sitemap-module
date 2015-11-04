@@ -1,4 +1,14 @@
 actor: Tester
+coverage:
+    enabled: true
+    whitelist:
+        include:
+            - RobotsTxt.php
+            - Sitemap.php
+            - controllers/DefaultController.php
+        exclude:
+            - vendor/*
+            - tests/*
 paths:
     tests: tests
     log: tests/_output
