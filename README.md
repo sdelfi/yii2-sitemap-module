@@ -104,7 +104,7 @@ to the `require` section of your application's `composer.json` file.
             // your additional urls
             [
                 'loc' => ['/news/default/index'],
-                'changefreq' => \assayerpro\sitemap\behaviors\Sitemap::DAILY,
+                'changefreq' => \assayerpro\sitemap\Sitemap::DAILY,
                 'priority' => 0.8,
                 'news' => [
                     'publication'   => [
