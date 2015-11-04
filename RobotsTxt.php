@@ -10,8 +10,10 @@
  *
  */
 namespace assayerpro\sitemap;
+
 use Yii;
 use yii\helpers\Url;
+
 /**
  * Yii2 module for automatically generating robots.txt.
  *
