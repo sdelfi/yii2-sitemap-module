@@ -42,7 +42,8 @@ class CreateController extends Controller
 
         $this->stdout("Writing sitemap to $file\n", Console::FG_GREEN);
         file_put_contents($file, $sitemap[0]['xml']);
-        for ($i = 1; $i < count($sitemap); $i++) {
+        $sitemap_count = count($sitemap);
+        for ($i = 1; $i < $sitemap_count; $i++) {
             $file = Yii::getAlias('@webroot'.$sitemap[$i]['file']);
             $this->stdout("Writing sitemap to $file\n", Console::FG_GREEN);
             file_put_contents($file, $sitemap[$i]['xml']);
