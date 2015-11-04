@@ -11,6 +11,7 @@
  */
 namespace assayerpro\sitemap;
 use Yii;
+use yii\helpers\Url;
 /**
  * Yii2 module for automatically generating robots.txt.
  *
@@ -23,6 +24,8 @@ class RobotsTxt extends \yii\base\Component
     public $host = '';
     /** @var string */
     public $sitemap = '';
+    /** @var string */
+    public $userAgent = [];
     /**
      * @inheritdoc
      */
@@ -49,6 +52,15 @@ class RobotsTxt extends \yii\base\Component
         $params['Sitemap'] = $this->sitemap;
         foreach (array_filter($params) as $key => $value) {
             $result .= "$key: $value\n";
+        }
+        foreach ($this->userAgent as $userAgent => $value) {
+            $result .= "User-agent: $userAgent\n";
+            foreach ($value as $permission => $urls) {
+                foreach ($urls as $url) {
+                    $url = Url::to($url);
+                    $result .= "$permission: $url\n";
+                }
+            }
         }
         return $result;
 
