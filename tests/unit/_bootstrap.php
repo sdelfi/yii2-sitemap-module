@@ -24,6 +24,9 @@ new \yii\console\Application([
             'rules' => [
                 '' => '/main/default/index',
                 '/api-v2' => '/api/version2/index',
+                '/news' => '/news/default/index',
+                ['pattern' => 'sitemap-<id:\d+>', 'route' => '/sitemap/default/index', 'suffix' => '.xml'],
+                ['pattern' => 'sitemap', 'route' => 'sitemap/default/index', 'suffix' => '.xml'],
             ],
             'baseUrl' => '',
             'hostInfo' => 'http://wwww.example.com/',
