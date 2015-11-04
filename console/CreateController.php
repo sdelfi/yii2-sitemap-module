@@ -33,7 +33,7 @@ class CreateController extends Controller
      * @access public
      * @return integer
      */
-    public function actionCreate($file='@webroot/sitemap.xml')
+    public function actionCreate($file = '@webroot/sitemap.xml')
     {
         $file = Yii::getAlias($file);
         $this->stdout("Generate sitemap file.\n", Console::FG_GREEN);
@@ -42,8 +42,8 @@ class CreateController extends Controller
 
         $this->stdout("Writing sitemap to $file\n", Console::FG_GREEN);
         file_put_contents($file, $sitemap[0]['xml']);
-        for ($i=1; $i < count($sitemap); $i++) {
-            $file = Yii::getAlias('@webroot' . $sitemap[$i]['file']);
+        for ($i = 1; $i < count($sitemap); $i++) {
+            $file = Yii::getAlias('@webroot'.$sitemap[$i]['file']);
             $this->stdout("Writing sitemap to $file\n", Console::FG_GREEN);
             file_put_contents($file, $sitemap[$i]['xml']);
         }

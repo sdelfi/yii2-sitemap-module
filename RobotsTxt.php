@@ -25,7 +25,7 @@ class RobotsTxt extends \yii\base\Component
     public $sitemap = '';
     /**
      * @inheritdoc
-    */
+     */
     public function init()
     {
         parent::init();
