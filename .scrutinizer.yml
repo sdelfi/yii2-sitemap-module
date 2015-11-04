@@ -13,6 +13,7 @@ build:
         override:
             -
                 command: 'vendor/bin/codecept build'
+            -
                 command: 'vendor/bin/codecept run --coverage-xml=report.xml'
                 coverage:
                     file: 'tests/_output/report.xml'
