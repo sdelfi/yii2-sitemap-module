@@ -48,6 +48,9 @@ to the `require` section of your application's `composer.json` file.
 
 ```php
 'components' => [
+    'robotsTxt' => [
+        'class' => 'assayerpro\sitemap\RobotsTxt',
+    ],
     'sitemap' => [
         'class' => 'assayerpro\sitemap\Sitemap',
         'models' => [
