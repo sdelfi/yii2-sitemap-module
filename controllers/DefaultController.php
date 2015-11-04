@@ -73,10 +73,9 @@ class DefaultController extends Controller
      */
     public function actionRobotsTxt()
     {
+        $robotsTxt = Yii::$app->robotsTxt;
+        $robotsTxt->sitemap = Yii::$app->urlManager->createAbsoluteUrl([$this->module->id.'/'. $this->id .'/index']);
         Yii::$app->response->format = 'txt';
-        return $this->renderPartial('robots-txt', [
-            'host' => Yii::$app->request->hostInfo,
-            'sitemap' => Yii::$app->urlManager->createAbsoluteUrl([$this->module->id.'/'. $this->id .'/index']),
-        ]);
+        return $robotsTxt->render();
     }
 }
