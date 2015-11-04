@@ -97,4 +97,10 @@ EOF;
         $this->assertEqualXMLStructure($expected->firstChild, $actual->firstChild);
     }
 
+    public function testSitemapDatetow3c()
+    {
+        $this->assertEquals('2015-01-01T00:00:00+00:00', Sitemap::dateToW3C("01-01-2015"));
+        $this->assertEquals('2015-11-04T14:52:47+00:00', Sitemap::dateToW3C(1446648767));
+        $this->assertEquals('2015-11-04T14:53:57+00:00', Sitemap::dateToW3C("Wed Nov 4 17:53:57 MSK 2015"));
+    }
 }
