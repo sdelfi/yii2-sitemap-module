@@ -16,6 +16,7 @@ use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use assayerpro\sitemap\RobotsTxt;
 
 /**
  * DefaultController for sitemap module
@@ -73,7 +74,7 @@ class DefaultController extends Controller
      */
     public function actionRobotsTxt()
     {
-        $robotsTxt = Yii::$app->robotsTxt;
+        $robotsTxt = empty(Yii::$app->components['robotsTxt'])?new RobotsTxt():Yii::$app->robotsTxt;
         $robotsTxt->sitemap = Yii::$app->urlManager->createAbsoluteUrl([$this->module->id.'/'. $this->id .'/index']);
         Yii::$app->response->format = 'txt';
         return $robotsTxt->render();
