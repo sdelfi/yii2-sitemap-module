@@ -48,6 +48,7 @@ class RobotsTxt extends \yii\base\Component
     public function render()
     {
         $result = "";
+        $params = [];
         $params['Host'] = $this->host;
         $params['Sitemap'] = $this->sitemap;
         foreach (array_filter($params) as $key => $value) {
