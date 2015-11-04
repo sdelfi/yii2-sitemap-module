@@ -30,7 +30,10 @@ new \yii\console\Application([
             ],
             'baseUrl' => '',
             'hostInfo' => 'http://wwww.example.com/',
-        ]
+        ],
+        'cache' => [
+            'class' => 'yii\caching\FileCache',
+        ],
     ],
 
 ]);
