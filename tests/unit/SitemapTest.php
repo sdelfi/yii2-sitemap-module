@@ -97,6 +97,23 @@ EOF;
         $this->assertEqualXMLStructure($expected->firstChild, $actual->firstChild);
     }
 
+    public function testSitemapCache()
+    {
+        Yii::$app->cache->flush();
+        $sitemap = new Sitemap([
+            'urls' => [
+                [ 'loc' => '/'],
+                [ 'loc' => '/api'],
+            ]
+        ]);
+        $expectedXML = <<<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"><url><loc>http://wwww.example.com/</loc></url><url><loc>http://wwww.example.com/api</loc></url></urlset>
+EOF;
+        $this->assertEquals($expectedXML,$sitemap->render()[0]['xml']);
+        $sitemap->urls = [];
+        $this->assertEquals($expectedXML,$sitemap->render()[0]['xml']);
+    }
     public function testSitemapDatetow3c()
     {
         $this->assertEquals('2015-01-01T00:00:00+00:00', Sitemap::dateToW3C("01-01-2015"));
