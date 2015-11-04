@@ -37,7 +37,7 @@ class DefaultController extends Controller
                 'class' => 'yii\filters\PageCache',
                 'only' => ['index', 'robots-txt'],
                 'duration' => Yii::$app->sitemap->cacheExpire,
-                'variations' => [ Yii::$app->request->get('id')],
+                'variations' => [Yii::$app->request->get('id')],
             ],
         ];
     }
@@ -48,7 +48,7 @@ class DefaultController extends Controller
      * @access public
      * @return string
      */
-    public function actionIndex($id=0)
+    public function actionIndex($id = 0)
     {
         $sitemap = Yii::$app->sitemap->render();
         if (empty($sitemap[$id])) {
@@ -74,8 +74,8 @@ class DefaultController extends Controller
      */
     public function actionRobotsTxt()
     {
-        $robotsTxt = empty(Yii::$app->components['robotsTxt'])?new RobotsTxt():Yii::$app->robotsTxt;
-        $robotsTxt->sitemap = Yii::$app->urlManager->createAbsoluteUrl([$this->module->id.'/'. $this->id .'/index']);
+        $robotsTxt = empty(Yii::$app->components['robotsTxt']) ? new RobotsTxt() : Yii::$app->robotsTxt;
+        $robotsTxt->sitemap = Yii::$app->urlManager->createAbsoluteUrl([$this->module->id.'/'.$this->id.'/index']);
         Yii::$app->response->format = 'txt';
         return $robotsTxt->render();
     }

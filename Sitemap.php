@@ -70,7 +70,7 @@ class Sitemap extends \yii\base\Component
             return $result;
         }
         $urls = $this->generateUrls();
-        $parts = ceil(count($urls)/$this->maxSectionUrl);
+        $parts = ceil(count($urls) / $this->maxSectionUrl);
         if ($parts > 1) {
             $xml = new XMLWriter();
             $xml->openMemory();
@@ -89,7 +89,7 @@ class Sitemap extends \yii\base\Component
             $result[0]['file'] = Url::to(['/sitemap/default/index']);
         }
         $urlItem = 0;
-        for ($i=1; $i <= $parts; $i++) {
+        for ($i = 1; $i <= $parts; $i++) {
             $xml = new XMLWriter();
             $xml->openMemory();
             $xml->startDocument('1.0', 'UTF-8');
@@ -97,7 +97,7 @@ class Sitemap extends \yii\base\Component
             foreach (static::SCHEMAS as $attr => $schemaUrl) {
                 $xml->writeAttribute($attr, $schemaUrl);
             }
-            for (; ($urlItem < $i*$this->maxSectionUrl) && ($urlItem < count($urls)); $urlItem++) {
+            for (; ($urlItem < $i * $this->maxSectionUrl) && ($urlItem < count($urls)); $urlItem++) {
                 $xml->startElement('url');
                 foreach ($urls[$urlItem] as $urlKey => $urlValue) {
                     if (is_array($urlValue)) {
@@ -159,13 +159,13 @@ class Sitemap extends \yii\base\Component
             }
             $urls = array_merge($urls, $model->generateSiteMap());
         }
-        $urls = array_map(function ($item) {
+        $urls = array_map(function($item) {
             $item['loc'] = Url::to($item['loc'], true);
             if (isset($item['lastmod'])) {
                 $item['lastmod'] = Sitemap::dateToW3C($item['lastmod']);
             }
             if (isset($item['images'])) {
-                $item['images'] = array_map(function ($image) {
+                $item['images'] = array_map(function($image) {
                     $image['loc'] = Url::to($image['loc'], true);
                     return $image;
                 }, $item['images']);
