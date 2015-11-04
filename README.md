@@ -50,6 +50,26 @@ to the `require` section of your application's `composer.json` file.
 'components' => [
     'robotsTxt' => [
         'class' => 'assayerpro\sitemap\RobotsTxt',
+        'userAgent' => [
+            // Disallow url for all bots
+            '*' => [
+                'Disallow' => [
+                    ['/api/default/index'],
+                ],
+                'Allow' => [
+                    ['/api/doc/index'],
+                ],
+            ],
+            // Block a specific image from Google Images
+            'Googlebot-Image' => [
+                'Disallow' => [
+                    // All images on your site from Google Images
+                    '/',
+                    // Files of a specific file type (for example, .gif)
+                    '/*.gif$',
+                ],
+            ],
+        ],
     ],
     'sitemap' => [
         'class' => 'assayerpro\sitemap\Sitemap',
