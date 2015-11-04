@@ -18,6 +18,17 @@ new \yii\console\Application([
         'request' => [
             'class' => '\yii\web\Request',
         ],
-    ]
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                '' => '/main/default/index',
+                '/api-v2' => '/api/version2/index',
+            ],
+            'baseUrl' => '',
+            'hostInfo' => 'http://wwww.example.com/',
+        ]
+    ],
+
 ]);
 
