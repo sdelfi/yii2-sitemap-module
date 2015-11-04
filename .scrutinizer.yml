@@ -9,6 +9,8 @@ coding_style:
             around_operators:
                 concatenation: false
 build:
+    environment:
+            php: '5.5.25'
     tests:
         override:
             -
