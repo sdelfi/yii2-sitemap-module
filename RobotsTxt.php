@@ -24,7 +24,7 @@ class RobotsTxt extends \yii\base\Component
     public $host = '';
     /** @var string */
     public $sitemap = '';
-    /** @var string */
+    /** @var array */
     public $userAgent = [];
     /**
      * @inheritdoc
