@@ -34,6 +34,11 @@ new \yii\console\Application([
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'sqlite:/' . __DIR__ . '/../_data/yii2-sitemap-test.sqlite',
+            'charset' => 'utf8',
+        ]
     ],
 
 ]);
