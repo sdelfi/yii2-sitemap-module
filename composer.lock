@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b19fb14322849157eb4d36e5cf1029e0",
-    "content-hash": "603d93935609175760176ea68bef67c5",
+    "hash": "b06501bce61a46c891203ea57affca79",
+    "content-hash": "d8067acb6210ded832f6aa0dcf31dcd7",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -2145,5 +2145,7 @@
     "platform": {
         "php": ">=5.6.0"
     },
-    "platform-dev": []
+    "platform-dev": {
+        "ext-sqlite3": "*"
+    }
 }
