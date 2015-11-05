@@ -15,6 +15,7 @@
 namespace assayerpro\sitemap;
 
 use Yii;
+use XMLWriter;
 use yii\base\InvalidConfigException;
 use yii\caching\Cache;
 use yii\helpers\Url;
@@ -44,6 +45,9 @@ class Sitemap extends \yii\base\Component
     /** @var int Cache expiration time */
     public $cacheExpire = 86400;
 
+    /** @var string Cache key */
+    public $cacheKey = 'sitemap';
+
     /** @var boolean Use php's gzip compressing. */
     public $enableGzip = false;
 
@@ -53,46 +57,84 @@ class Sitemap extends \yii\base\Component
     /** @var array Url list for sitemap */
     public $urls = [];
 
+    /** @var int */
+    public $maxSectionUrl = 20000;
     /**
      * Build site map.
-     * @return string
+     * @return array
      */
     public function render()
     {
+        $result = Yii::$app->cache->get($this->cacheKey);
+        if ($result) {
+            return $result;
+        }
         $urls = $this->generateUrls();
-        $dom = new \DOMDocument('1.0', Yii::$app->charset);
-        $urlset = $dom->createElement('urlset');
-        foreach (static::SCHEMAS as $attr => $schemaUrl) {
-            $urlset->setAttribute($attr, $schemaUrl);
-        }
-        foreach ($urls as $urlItem) {
-            $url = $dom->createElement('url');
-            foreach ($urlItem as $urlKey => $urlValue) {
-                if (is_array($urlValue)) {
-                    switch ($urlKey) {
-                        case 'news':
-                            $namespace = 'news:';
-                            $elem = $dom->createElement($namespace.$urlKey);
-                            $url->appendChild(static::hashToXML($urlValue, $elem, $dom, $namespace));
-                            break;
-                        case 'images':
-                            $namespace = 'image:';
-                            foreach ($urlValue as $image) {
-                                $elem = $dom->createElement($namespace.'image');
-                                $url->appendChild(static::hashToXML($image, $elem, $dom, $namespace));
-                            }
-                            break;
-                    }
-                } else {
-                    $elem = $dom->createElement($urlKey);
-                    $elem->appendChild($dom->createTextNode($urlValue));
-                    $url->appendChild($elem);
-                }
+        $parts = ceil(count($urls) / $this->maxSectionUrl);
+        if ($parts > 1) {
+            $xml = new XMLWriter();
+            $xml->openMemory();
+            $xml->startDocument('1.0', 'UTF-8');
+            $xml->startElement('sitemapindex');
+            $xml->writeAttribute('xmlns', static::SCHEMAS['xmlns']);
+            for ($i = 1; $i <= $parts; $i++) {
+                $xml->startElement('sitemap');
+                $xml->writeElement('loc', Url::to(['/sitemap/default/index', 'id' =>$i], true));
+                $xml->writeElement('lastmod', static::dateToW3C(time()));
+                $xml->endElement();
+                $result[$i]['file'] = Url::to(['/sitemap/default/index', 'id' =>$i], false);
             }
-            $urlset->appendChild($url);
+            $xml->endElement();
+            $result[0]['xml'] = $xml->outputMemory();
+            $result[0]['file'] = Url::to(['/sitemap/default/index']);
         }
-        $dom->appendChild($urlset);
-        return $dom->saveXML();
+        $urlItem = 0;
+        for ($i = 1; $i <= $parts; $i++) {
+            $xml = new XMLWriter();
+            $xml->openMemory();
+            $xml->startDocument('1.0', 'UTF-8');
+            $xml->startElement('urlset');
+            foreach (static::SCHEMAS as $attr => $schemaUrl) {
+                $xml->writeAttribute($attr, $schemaUrl);
+            }
+            for (; ($urlItem < $i * $this->maxSectionUrl) && ($urlItem < count($urls)); $urlItem++) {
+                $xml->startElement('url');
+                foreach ($urls[$urlItem] as $urlKey => $urlValue) {
+                    if (is_array($urlValue)) {
+                        switch ($urlKey) {
+                            case 'news':
+                                $namespace = 'news:';
+                                $xml->startElement($namespace.$urlKey);
+                                static::hashToXML($urlValue, $xml, $namespace);
+                                $xml->endElement();
+                                break;
+                            case 'images':
+                                $namespace = 'image:';
+                                foreach ($urlValue as $image) {
+                                    $xml->startElement($namespace.'image');
+                                    static::hashToXML($image, $xml, $namespace);
+                                    $xml->endElement();
+                                }
+                                break;
+                        }
+                    } else {
+                        $xml->writeElement($urlKey, $urlValue);
+                    }
+                }
+                $xml->endElement();
+            }
+
+            $xml->endElement(); // urlset
+            $xml->endElement(); // document
+            $result[$i]['xml'] = $xml->outputMemory();
+        }
+
+        if ($parts == 1) {
+            $result[0] = $result[1];
+            unset($result[1]);
+        }
+        Yii::$app->cache->set($this->cacheKey, $result, $this->cacheExpire);
+        return $result;
     }
 
     /**
@@ -117,13 +159,13 @@ class Sitemap extends \yii\base\Component
             }
             $urls = array_merge($urls, $model->generateSiteMap());
         }
-        $urls = array_map(function ($item) {
+        $urls = array_map(function($item) {
             $item['loc'] = Url::to($item['loc'], true);
             if (isset($item['lastmod'])) {
                 $item['lastmod'] = Sitemap::dateToW3C($item['lastmod']);
             }
             if (isset($item['images'])) {
-                $item['images'] = array_map(function ($image) {
+                $item['images'] = array_map(function($image) {
                     $image['loc'] = Url::to($image['loc'], true);
                     return $image;
                 }, $item['images']);
@@ -138,25 +180,24 @@ class Sitemap extends \yii\base\Component
      * Convert associative arrays to XML
      *
      * @param array $hash
-     * @param \DOMElement $node
-     * @param \DOMDocument $dom
+     * @param XMLWriter $xml
      * @param string $namespace
      * @static
      * @access protected
-     * @return \DOMElement
+     * @return XMLWriter
      */
-    protected static function hashToXML($hash, $node, $dom, $namespace = '')
+    protected static function hashToXML($hash, $xml, $namespace = '')
     {
         foreach ($hash as $key => $value) {
-            $elem = $dom->createElement($namespace.$key);
+            $xml->startElement($namespace.$key);
             if (is_array($value)) {
-                $elem = static::hashToXML($value, $elem, $dom, $namespace);
+                static::hashToXML($value, $xml, $namespace);
             } else {
-                $elem->appendChild($dom->createTextNode($value));
+                $xml->text($value);
             }
-            $node->appendChild($elem);
+            $xml->endElement();
         }
-        return $node;
+        return $xml;
     }
     /**
      * Convert date to W3C format

@@ -14,6 +14,9 @@ namespace assayerpro\sitemap\controllers;
 
 use Yii;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use assayerpro\sitemap\RobotsTxt;
 
 /**
  * DefaultController for sitemap module
@@ -33,7 +36,8 @@ class DefaultController extends Controller
             'pageCache' => [
                 'class' => 'yii\filters\PageCache',
                 'only' => ['index', 'robots-txt'],
-                'duration' => \Yii::$app->sitemap->cacheExpire,
+                'duration' => Yii::$app->sitemap->cacheExpire,
+                'variations' => [Yii::$app->request->get('id')],
             ],
         ];
     }
@@ -44,11 +48,14 @@ class DefaultController extends Controller
      * @access public
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($id = 0)
     {
         $sitemap = Yii::$app->sitemap->render();
+        if (empty($sitemap[$id])) {
+            throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
+        }
 
-        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        Yii::$app->response->format = Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'application/xml');
         if (Yii::$app->sitemap->enableGzip) {
@@ -56,7 +63,7 @@ class DefaultController extends Controller
             $headers->add('Content-Encoding', 'gzip');
             $headers->add('Content-Length', strlen($sitemap));
         }
-        return $sitemap;
+        return $sitemap[$id]['xml'];
     }
 
     /**
@@ -67,10 +74,9 @@ class DefaultController extends Controller
      */
     public function actionRobotsTxt()
     {
-        \Yii::$app->response->format = 'txt';
-        return $this->renderPartial('robots-txt', [
-            'host' => \Yii::$app->request->serverName,
-            'sitemap' => \Yii::$app->urlManager->createAbsoluteUrl([$this->module->id.'/'. $this->id .'/index']),
-        ]);
+        $robotsTxt = empty(Yii::$app->components['robotsTxt']) ? new RobotsTxt() : Yii::$app->robotsTxt;
+        $robotsTxt->sitemap = Yii::$app->urlManager->createAbsoluteUrl([$this->module->id.'/'.$this->id.'/index']);
+        Yii::$app->response->format = 'txt';
+        return $robotsTxt->render();
     }
 }

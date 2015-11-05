@@ -48,6 +48,29 @@ to the `require` section of your application's `composer.json` file.
 
 ```php
 'components' => [
+    'robotsTxt' => [
+        'class' => 'assayerpro\sitemap\RobotsTxt',
+        'userAgent' => [
+            // Disallow url for all bots
+            '*' => [
+                'Disallow' => [
+                    ['/api/default/index'],
+                ],
+                'Allow' => [
+                    ['/api/doc/index'],
+                ],
+            ],
+            // Block a specific image from Google Images
+            'Googlebot-Image' => [
+                'Disallow' => [
+                    // All images on your site from Google Images
+                    '/',
+                    // Files of a specific file type (for example, .gif)
+                    '/*.gif$',
+                ],
+            ],
+        ],
+    ],
     'sitemap' => [
         'class' => 'assayerpro\sitemap\Sitemap',
         'models' => [
@@ -81,7 +104,7 @@ to the `require` section of your application's `composer.json` file.
             // your additional urls
             [
                 'loc' => ['/news/default/index'],
-                'changefreq' => \assayerpro\sitemap\behaviors\Sitemap::DAILY,
+                'changefreq' => \assayerpro\sitemap\Sitemap::DAILY,
                 'priority' => 0.8,
                 'news' => [
                     'publication'   => [
@@ -146,9 +169,36 @@ public function behaviors()
 ```php
 'urlManager' => [
     'rules' => [
+        ['pattern' => 'sitemap-<id:\d+>', 'route' => '/sitemap/default/index', 'suffix' => '.xml'],
         ['pattern' => 'sitemap', 'route' => 'sitemap/default/index', 'suffix' => '.xml'],
     ],
 ],
+```
+Console generate sitemap
+------------------------
+
+Remove sitemap section from modules configuration.
+
+Add console command configuration:
+```php
+    'controllerMap' => [
+        'sitemap' => [
+            'class' => 'assayerpro\sitemap\console\CreateController',
+        ],
+    ],
+```
+
+Add baseUrl for urlManager:
+```php
+     'urlManager' => [
+         'baseUrl' => '',
+         'hostInfo' => 'http://example.com/',
+     ],
+```
+
+Run command from console:
+```sh
+$ ./yii sitemap/create
 ```
 
 Resources
