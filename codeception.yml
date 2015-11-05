@@ -6,6 +6,7 @@ coverage:
             - RobotsTxt.php
             - Sitemap.php
             - controllers/DefaultController.php
+            - console/CreateController.php
         exclude:
             - vendor/*
             - tests/*
