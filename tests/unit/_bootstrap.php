@@ -23,6 +23,8 @@ new \yii\console\Application([
             'showScriptName' => false,
             'rules' => [
                 '' => '/main/default/index',
+                'article/<id:\d+>-<slug>' => '/article/default/index',
+                'gallery/<id:\d+>-<slug>' => '/gallery/default/index',
                 '/api-v2' => '/api/version2/index',
                 '/news' => '/news/default/index',
                 ['pattern' => 'sitemap-<id:\d+>', 'route' => '/sitemap/default/index', 'suffix' => '.xml'],
