@@ -1,5 +1,7 @@
 <?php
 use assayerpro\sitemap\Sitemap;
+use assayerpro\tests\unit\Article;
+use assayerpro\tests\unit\Gallery;
 
 class SitemapTest extends \Codeception\TestCase\Test
 {
@@ -120,5 +122,35 @@ EOF;
         $this->assertEquals('2015-01-01T00:00:00+00:00', Sitemap::dateToW3C("01-01-2015"));
         $this->assertEquals('2015-11-04T14:52:47+00:00', Sitemap::dateToW3C(1446648767));
         $this->assertEquals('2015-11-04T14:53:57+00:00', Sitemap::dateToW3C("Wed Nov 4 17:53:57 MSK 2015"));
+    }
+
+    public function testSitemapModel() {
+        Yii::$app->cache->flush();
+        $sitemap = new Sitemap([
+            'models' => [
+                'assayerpro\sitemap\tests\unit\Article',
+                [
+                    'class' => 'assayerpro\sitemap\tests\unit\Gallery',
+                    'behaviors' => [
+                        'sitemap' => [
+                            'class' => 'assayerpro\sitemap\behaviors\SitemapBehavior',
+                            'dataClosure' => function ($model) {
+                                /** @var \yii\db\ActiveQuery $model */
+                                return [
+                                    'loc' => $model->url,
+                                    'changefreq' => \assayerpro\sitemap\Sitemap::WEEKLY,
+                                    'priority' => 0.8
+                                ];
+                            }
+                        ],
+                     ],
+                ],
+            ]
+        ]);
+        $expectedXML = <<<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"><url><loc>http://www.example.com/article/1-article-one</loc><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>http://www.example.com/article/2-article-two</loc><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>http://www.example.com/article/3-article-with-long-long-long-title</loc><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>http://www.example.com/gallery/1-first-gallery</loc><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>http://www.example.com/gallery/2-landscape</loc><changefreq>weekly</changefreq><priority>0.8</priority></url></urlset>
+EOF;
+        $this->assertEquals($expectedXML,$sitemap->render()[0]['xml']);
     }
 }
