@@ -31,7 +31,7 @@ new \yii\console\Application([
                 ['pattern' => 'sitemap', 'route' => 'sitemap/default/index', 'suffix' => '.xml'],
             ],
             'baseUrl' => '',
-            'hostInfo' => 'http://wwww.example.com/',
+            'hostInfo' => 'http://www.example.com/',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',

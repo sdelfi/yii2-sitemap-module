@@ -56,7 +56,7 @@ class SitemapTest extends \Codeception\TestCase\Test
         ]);
 $expectedXml = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"><url><loc>http://wwww.example.com/news</loc><changefreq>daily</changefreq><priority>0.8</priority><news:news><news:publication><news:name>Example Blog</news:name><news:language>en</news:language></news:publication><news:access>Subscription</news:access><news:genres>Blog, UserGenerated</news:genres><news:publication_date>2015-11-04T19:27:01TZD</news:publication_date><news:title>Example Title</news:title><news:keywords>example, keywords, comma-separated</news:keywords><news:stock_tickers>NASDAQ:A, NASDAQ:B</news:stock_tickers></news:news><image:image><image:loc>http://example.com/image.jpg</image:loc><image:caption>This is an example of a caption of an image</image:caption><image:geo_location>City, State</image:geo_location><image:title>Example image</image:title><image:license>http://example.com/license</image:license></image:image></url><url><loc>http://wwww.example.com/</loc><lastmod>2015-04-14T12:20:00+00:00</lastmod></url></urlset>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"><url><loc>http://www.example.com/news</loc><changefreq>daily</changefreq><priority>0.8</priority><news:news><news:publication><news:name>Example Blog</news:name><news:language>en</news:language></news:publication><news:access>Subscription</news:access><news:genres>Blog, UserGenerated</news:genres><news:publication_date>2015-11-04T19:27:01TZD</news:publication_date><news:title>Example Title</news:title><news:keywords>example, keywords, comma-separated</news:keywords><news:stock_tickers>NASDAQ:A, NASDAQ:B</news:stock_tickers></news:news><image:image><image:loc>http://example.com/image.jpg</image:loc><image:caption>This is an example of a caption of an image</image:caption><image:geo_location>City, State</image:geo_location><image:title>Example image</image:title><image:license>http://example.com/license</image:license></image:image></url><url><loc>http://www.example.com/</loc><lastmod>2015-04-14T12:20:00+00:00</lastmod></url></urlset>
 EOF;
         $this->assertEquals($expectedXml, $sitemap->render()[0]['xml']);
     }
@@ -82,11 +82,11 @@ $expectedXml = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <sitemap>
-        <loc>http://wwww.example.com/sitemap-1.xml</loc>
+        <loc>http://www.example.com/sitemap-1.xml</loc>
         <lastmod>2015-11-04T13:31:41+00:00</lastmod>
     </sitemap>
     <sitemap>
-        <loc>http://wwww.example.com/sitemap-2.xml</loc>
+        <loc>http://www.example.com/sitemap-2.xml</loc>
         <lastmod>2015-11-04T13:31:41+00:00</lastmod>
     </sitemap>
 </sitemapindex>
@@ -109,7 +109,7 @@ EOF;
         ]);
         $expectedXML = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"><url><loc>http://wwww.example.com/</loc></url><url><loc>http://wwww.example.com/api</loc></url></urlset>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"><url><loc>http://www.example.com/</loc></url><url><loc>http://www.example.com/api</loc></url></urlset>
 EOF;
         $this->assertEquals($expectedXML,$sitemap->render()[0]['xml']);
         $sitemap->urls = [];
