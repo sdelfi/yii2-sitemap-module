@@ -2,6 +2,9 @@ XML Sitemap Module for Yii2
 ==========================
 
 [![PHP version](https://badge.fury.io/ph/assayer-pro%2Fyii2-sitemap-module.svg)](http://badge.fury.io/ph/assayer-pro%2Fyii2-sitemap-module)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/assayer-pro/yii2-sitemap-module/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/assayer-pro/yii2-sitemap-module/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/assayer-pro/yii2-sitemap-module/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/assayer-pro/yii2-sitemap-module/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/assayer-pro/yii2-sitemap-module/badges/build.png?b=master)](https://scrutinizer-ci.com/g/assayer-pro/yii2-sitemap-module/build-status/master)
 
 Yii2 module for automatically generating [XML Sitemap](http://www.sitemaps.org/protocol.html).
 
