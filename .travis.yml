@@ -14,4 +14,4 @@ before_script:
 
 script:
   - vendor/bin/codecept build
-  - vendor/bin/codecept run --coverage-xml=report.xml
+  - vendor/bin/codecept run
