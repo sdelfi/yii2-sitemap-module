@@ -9,13 +9,17 @@ class SitemapTest extends \Codeception\TestCase\Test
      * @var \UnitTester
      */
     protected $tester;
+    protected $oldTimeZone;
 
     protected function _before()
     {
+        $this->oldTimeZone = date_default_timezone_get();
+        date_default_timezone_set("UTC");
     }
 
     protected function _after()
     {
+        date_default_timezone_set($this->oldTimeZone);
     }
 
     // tests
