@@ -40,7 +40,7 @@ class CreateController extends Controller
      *
      * @var string
      */
-    public $rootFile = 'sitemap.xml';
+    public $sitemapFile = 'sitemap.xml';
 
     /**
      * Generate sitemap.xml file
@@ -50,7 +50,7 @@ class CreateController extends Controller
      */
     public function actionCreate()
     {
-        $file = Yii::getAlias($this->rootAlias . '/' . $this->rootFile);
+        $file = Yii::getAlias($this->rootAlias . '/' . $this->sitemapFile);
         $this->stdout("Generate sitemap file.\n", Console::FG_GREEN);
         $this->stdout("Rendering sitemap...\n", Console::FG_GREEN);
         $sitemap = Yii::$app->sitemap->render();
