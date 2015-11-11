@@ -43,6 +43,14 @@ class CreateController extends Controller
     public $sitemapFile = 'sitemap.xml';
 
     /**
+     * @inheritdoc
+     */
+    public function options($actionID)
+    {
+        return array_merge(parent::options($actionID), ['rootDir', 'sitemapFile']);
+    }
+
+    /**
      * Generate sitemap.xml file
      *
      * @access public
