@@ -29,16 +29,12 @@ class CreateController extends Controller
     public $defaultAction = 'create';
 
     /**
-     * Folder alias for sitemaps files
-     *
-     * @var string
+     * @var string folder for sitemaps files
      */
     public $rootDir = '@webroot';
 
     /**
-     * Sitemap main file name
-     *
-     * @var string
+     * @var string sitemap main file name
      */
     public $sitemapFile = 'sitemap.xml';
 
