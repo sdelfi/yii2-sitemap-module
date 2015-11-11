@@ -27,15 +27,34 @@ class CreateController extends Controller
      * @inheritdoc
      */
     public $defaultAction = 'create';
+
+    /**
+     * @var string folder for sitemaps files
+     */
+    public $rootDir = '@webroot';
+
+    /**
+     * @var string sitemap main file name
+     */
+    public $sitemapFile = 'sitemap.xml';
+
+    /**
+     * @inheritdoc
+     */
+    public function options($actionID)
+    {
+        return array_merge(parent::options($actionID), ['rootDir', 'sitemapFile']);
+    }
+
     /**
      * Generate sitemap.xml file
      *
      * @access public
      * @return integer
      */
-    public function actionCreate($file = '@webroot/sitemap.xml')
+    public function actionCreate()
     {
-        $file = Yii::getAlias($file);
+        $file = Yii::getAlias($this->rootDir . '/' . $this->sitemapFile);
         $this->stdout("Generate sitemap file.\n", Console::FG_GREEN);
         $this->stdout("Rendering sitemap...\n", Console::FG_GREEN);
         $sitemap = Yii::$app->sitemap->render();
@@ -44,7 +63,7 @@ class CreateController extends Controller
         file_put_contents($file, $sitemap[0]['xml']);
         $sitemap_count = count($sitemap);
         for ($i = 1; $i < $sitemap_count; $i++) {
-            $file = Yii::getAlias('@webroot'.$sitemap[$i]['file']);
+            $file = Yii::getAlias($this->rootDir . '/' . trim($sitemap[$i]['file'], '/'));
             $this->stdout("Writing sitemap to $file\n", Console::FG_GREEN);
             file_put_contents($file, $sitemap[$i]['xml']);
         }
