@@ -15,13 +15,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 * Either run
 
 ```
-php composer.phar require --prefer-dist "assayerpro/yii2-sitemap-module" "*"
+php composer.phar require --prefer-dist "assayer-pro/yii2-sitemap-module" "*"
 ```
 
 or add
 
 ```json
-"assayerpro/yii2-sitemap-module" : "*"
+"assayer-pro/yii2-sitemap-module" : "*"
 ```
 
 to the `require` section of your application's `composer.json` file.
@@ -41,7 +41,7 @@ to the `require` section of your application's `composer.json` file.
 ```php
 'modules' => [
     'sitemap' => [
-        'class' => 'assayerpro\sitemap\Sitemap',
+        'class' => 'assayerpro\sitemap\Module',
     ],
 ...
 ],
