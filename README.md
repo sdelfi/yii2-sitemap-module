@@ -84,7 +84,7 @@ to the `require` section of your application's `composer.json` file.
                 'class' => 'app\modules\news\models\News',
                 'behaviors' => [
                     'sitemap' => [
-                        'class' => SitemapBehavior::className(),
+                        'class' => '\assayerpro\sitemap\behaviors\SitemapBehavior',
                         'scope' => function ($model) {
                             /** @var \yii\db\ActiveQuery $model */
                             $model->select(['url', 'lastmod']);
@@ -95,7 +95,7 @@ to the `require` section of your application's `composer.json` file.
                             return [
                                 'loc' => Url::to($model->url, true),
                                 'lastmod' => strtotime($model->lastmod),
-                                'changefreq' => Sitemap::DAILY,
+                                'changefreq' => \assayerpro\sitemap\Sitemap::DAILY,
                                 'priority' => 0.8
                             ];
                         }
@@ -141,7 +141,7 @@ to the `require` section of your application's `composer.json` file.
 * Add behavior in the AR models, for example:
 
 ```php
-use asayerpro\sitemap\behaviors\SitemapBehavior;
+use assayerpro\sitemap\behaviors\SitemapBehavior;
 
 public function behaviors()
 {
