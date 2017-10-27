@@ -79,7 +79,8 @@ class DefaultController extends Controller
         $robotsTxt->sitemap = Yii::$app->urlManager->createAbsoluteUrl(
             empty($robotsTxt->sitemap) ? [$this->module->id.'/'.$this->id.'/index'] : $robotsTxt->sitemap
         );
-        Yii::$app->response->format = 'txt';
+        Yii::$app->response->format = Response::FORMAT_RAW;
+        Yii::$app->response->headers->add('Content-Type', 'text/plain');
         return $robotsTxt->render();
     }
 }
