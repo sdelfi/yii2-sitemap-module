@@ -164,6 +164,9 @@ EOF;
             'sortByPriority' => true,
             'urls' => [
                 [
+                    'loc' => ['/orders/default/index'],
+                ],
+                [
                     'loc' => ['/news/default/index'],
                     'priority' => 0.8,
                 ],
@@ -175,7 +178,7 @@ EOF;
         ]);
         $expectedXml = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"><url><loc>http://www.example.com/</loc><priority>1</priority></url><url><loc>http://www.example.com/news</loc><priority>0.8</priority></url></urlset>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"><url><loc>http://www.example.com/</loc><priority>1</priority></url><url><loc>http://www.example.com/news</loc><priority>0.8</priority></url><url><loc>http://www.example.com/orders/default/index</loc></url></urlset>
 EOF;
         $this->assertEquals($expectedXml, $sitemap->render()[0]['xml']);
     }
