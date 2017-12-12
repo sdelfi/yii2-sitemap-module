@@ -92,7 +92,6 @@ class SitemapBehavior extends Behavior
             call_user_func($this->scope, $query);
         }
 
-        $key = 0;
         foreach ($query->each($this->batchSize) as $model) {
 
             $urlData = call_user_func($this->dataClosure, $model);
