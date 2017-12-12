@@ -148,6 +148,7 @@ public function behaviors()
     return [
         'sitemap' => [
             'class' => SitemapBehavior::className(),
+            /**'batchSize' => 100,*/
             'scope' => function ($model) {
                 /** @var \yii\db\ActiveQuery $model */
                 $model->select(['url', 'lastmod']);
