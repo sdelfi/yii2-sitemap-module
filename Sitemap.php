@@ -42,6 +42,12 @@ class Sitemap extends \yii\base\Component
         'xmlns:news' => 'http://www.google.com/schemas/sitemap-news/0.9',
     ];
 
+    /**
+     * @var mixed renderedUrls
+     * @access private
+     */
+    private $renderedUrls = [];
+
     /** @var int Cache expiration time */
     public $cacheExpire = 86400;
 
@@ -59,6 +65,9 @@ class Sitemap extends \yii\base\Component
 
     /** @var int */
     public $maxSectionUrl = 20000;
+
+    /** @var bool Sort urls by priority. Top priority urls first */
+    public $sortByPriority = false;
     /**
      * Build site map.
      * @return array
@@ -69,8 +78,11 @@ class Sitemap extends \yii\base\Component
         if ($result) {
             return $result;
         }
-        $urls = $this->generateUrls();
-        $parts = ceil(count($urls) / $this->maxSectionUrl);
+        $this->generateUrls();
+        if ($this->sortByPriority) {
+            $this->sortUrlsByPriority();
+        }
+        $parts = ceil(count($this->renderedUrls) / $this->maxSectionUrl);
         if ($parts > 1) {
             $xml = new XMLWriter();
             $xml->openMemory();
@@ -97,9 +109,9 @@ class Sitemap extends \yii\base\Component
             foreach ($this->schemas as $attr => $schemaUrl) {
                 $xml->writeAttribute($attr, $schemaUrl);
             }
-            for (; ($urlItem < $i * $this->maxSectionUrl) && ($urlItem < count($urls)); $urlItem++) {
+            for (; ($urlItem < $i * $this->maxSectionUrl) && ($urlItem < count($this->renderedUrls)); $urlItem++) {
                 $xml->startElement('url');
-                foreach ($urls[$urlItem] as $urlKey => $urlValue) {
+                foreach ($this->renderedUrls[$urlItem] as $urlKey => $urlValue) {
                     if (is_array($urlValue)) {
                         switch ($urlKey) {
                             case 'news':
@@ -145,7 +157,7 @@ class Sitemap extends \yii\base\Component
      */
     protected function generateUrls()
     {
-        $urls = $this->urls;
+        $this->renderedUrls = $this->urls;
 
         foreach ($this->models as $modelName) {
             /** @var behaviors\SitemapBehavior $model */
@@ -157,9 +169,9 @@ class Sitemap extends \yii\base\Component
             } else {
                 $model = new $modelName;
             }
-            $urls = array_merge($urls, $model->generateSiteMap());
+            $this->renderedUrls = array_merge($this->renderedUrls, $model->generateSiteMap());
         }
-        $urls = array_map(function($item) {
+        $this->renderedUrls = array_map(function($item) {
             $item['loc'] = Url::to($item['loc'], true);
             if (isset($item['lastmod'])) {
                 $item['lastmod'] = Sitemap::dateToW3C($item['lastmod']);
@@ -171,9 +183,7 @@ class Sitemap extends \yii\base\Component
                 }, $item['images']);
             }
             return $item;
-        }, $urls);
-
-        return $urls;
+        }, $this->renderedUrls);
     }
 
     /**
@@ -214,5 +224,29 @@ class Sitemap extends \yii\base\Component
         } else {
             return date(DATE_W3C, strtotime($date));
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function sortUrlsByPriority()
+    {
+        usort($this->renderedUrls, function ($urlA, $urlB) {
+            if (!isset($urlA['priority'])) {
+                return 1;
+            }
+
+            if (!isset($urlB['priority'])) {
+                return -1;
+            }
+
+            $a = $urlA['priority'];
+            $b = $urlB['priority'];
+            if ($a == $b) {
+                return 0;
+            }
+
+            return ($a < $b) ? 1 : -1;
+        });
     }
 }
