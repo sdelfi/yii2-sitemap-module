@@ -231,7 +231,7 @@ class Sitemap extends \yii\base\Component
      */
     protected function sortUrlsByPriority()
     {
-        usort($this->renderedUrls, function ($urlA, $urlB) {
+        usort($this->renderedUrls, function($urlA, $urlB) {
             if (!isset($urlA['priority'])) {
                 return 1;
             }
