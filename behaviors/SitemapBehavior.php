@@ -10,7 +10,7 @@
  * based on https://github.com/himiklab/yii2-sitemap-module
  */
 
-namespace assayerpro\sitemap\behaviors;
+namespace sdelfi\sitemap\behaviors;
 
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
@@ -46,7 +46,7 @@ use yii\base\InvalidConfigException;
  * @see http://www.sitemaps.org/protocol.html
  * @author Serge Larin <serge.larin@gmail.com>
  * @author HimikLab
- * @package assayerpro\sitemap
+ * @package sdelfi\sitemap
  */
 class SitemapBehavior extends Behavior
 {

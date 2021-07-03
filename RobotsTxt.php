@@ -9,7 +9,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  *
  */
-namespace assayerpro\sitemap;
+namespace sdelfi\sitemap;
 
 use Yii;
 use yii\helpers\Url;
@@ -18,7 +18,7 @@ use yii\helpers\Url;
  * Yii2 module for automatically generating robots.txt.
  *
  * @author Serge Larin <serge.larin@gmail.com>
- * @package assayerpro\sitemap
+ * @package sdelfi\sitemap
  */
 class RobotsTxt extends \yii\base\Component
 {

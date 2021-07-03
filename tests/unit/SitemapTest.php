@@ -1,7 +1,7 @@
 <?php
-use assayerpro\sitemap\Sitemap;
-use assayerpro\tests\unit\Article;
-use assayerpro\tests\unit\Gallery;
+use sdelfi\sitemap\Sitemap;
+use sdelfi\tests\unit\Article;
+use sdelfi\tests\unit\Gallery;
 
 class SitemapTest extends \Codeception\TestCase\Test
 {
@@ -30,7 +30,7 @@ class SitemapTest extends \Codeception\TestCase\Test
             'urls' => [
                 [
                     'loc' => ['/news/default/index'],
-                    'changefreq' => \assayerpro\sitemap\Sitemap::DAILY,
+                    'changefreq' => \sdelfi\sitemap\Sitemap::DAILY,
                     'priority' => 0.8,
                     'news' => [
                         'publication'   => [
@@ -74,7 +74,7 @@ EOF;
             'urls' => [
                 [
                     'loc' => ['/news/default/index'],
-                    'changefreq' => \assayerpro\sitemap\Sitemap::DAILY,
+                    'changefreq' => \sdelfi\sitemap\Sitemap::DAILY,
                     'priority' => 0.8,
                 ],
                 [
@@ -132,17 +132,17 @@ EOF;
         Yii::$app->cache->flush();
         $sitemap = new Sitemap([
             'models' => [
-                'assayerpro\sitemap\tests\unit\Article',
+                'sdelfi\sitemap\tests\unit\Article',
                 [
-                    'class' => 'assayerpro\sitemap\tests\unit\Gallery',
+                    'class' => 'sdelfi\sitemap\tests\unit\Gallery',
                     'behaviors' => [
                         'sitemap' => [
-                            'class' => 'assayerpro\sitemap\behaviors\SitemapBehavior',
+                            'class' => 'sdelfi\sitemap\behaviors\SitemapBehavior',
                             'dataClosure' => function ($model) {
                                 /** @var \yii\db\ActiveQuery $model */
                                 return [
                                     'loc' => $model->url,
-                                    'changefreq' => \assayerpro\sitemap\Sitemap::WEEKLY,
+                                    'changefreq' => \sdelfi\sitemap\Sitemap::WEEKLY,
                                     'priority' => 0.8
                                 ];
                             }

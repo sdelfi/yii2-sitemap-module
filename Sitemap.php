@@ -16,8 +16,6 @@ namespace assayerpro\sitemap;
 
 use Yii;
 use XMLWriter;
-use yii\base\InvalidConfigException;
-use yii\caching\Cache;
 use yii\helpers\Url;
 
 /**
@@ -54,6 +52,9 @@ class Sitemap extends \yii\base\Component
     /** @var string Cache key */
     public $cacheKey = 'sitemap';
 
+    /** @var boolean Use cache. */
+    public $enableCache = true;
+
     /** @var boolean Use php's gzip compressing. */
     public $enableGzip = false;
 
@@ -74,9 +75,11 @@ class Sitemap extends \yii\base\Component
      */
     public function render()
     {
-        $result = Yii::$app->cache->get($this->cacheKey);
-        if ($result) {
-            return $result;
+        if($this->enableCache) { 
+            $result = Yii::$app->cache->get($this->cacheKey);
+            if ($result) {
+                return $result;
+            }
         }
         $this->generateUrls();
         if ($this->sortByPriority) {
@@ -145,7 +148,9 @@ class Sitemap extends \yii\base\Component
             $result[0] = $result[1];
             unset($result[1]);
         }
-        Yii::$app->cache->set($this->cacheKey, $result, $this->cacheExpire);
+        if($this->enableCache) { 
+            Yii::$app->cache->set($this->cacheKey, $result, $this->cacheExpire);
+        }
         return $result;
     }
 

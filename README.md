@@ -41,7 +41,7 @@ to the `require` section of your application's `composer.json` file.
 ```php
 'modules' => [
     'sitemap' => [
-        'class' => 'assayerpro\sitemap\Module',
+        'class' => 'sdelfi\sitemap\Module',
     ],
 ...
 ],
@@ -52,7 +52,7 @@ to the `require` section of your application's `composer.json` file.
 ```php
 'components' => [
     'robotsTxt' => [
-        'class' => 'assayerpro\sitemap\RobotsTxt',
+        'class' => 'sdelfi\sitemap\RobotsTxt',
         'userAgent' => [
             // Disallow url for all bots
             '*' => [
@@ -75,7 +75,7 @@ to the `require` section of your application's `composer.json` file.
         ],
     ],
     'sitemap' => [
-        'class' => 'assayerpro\sitemap\Sitemap',
+        'class' => 'sdelfi\sitemap\Sitemap',
         'models' => [
             // your models
             'app\modules\news\models\News',
@@ -84,7 +84,7 @@ to the `require` section of your application's `composer.json` file.
                 'class' => 'app\modules\news\models\News',
                 'behaviors' => [
                     'sitemap' => [
-                        'class' => '\assayerpro\sitemap\behaviors\SitemapBehavior',
+                        'class' => '\sdelfi\sitemap\behaviors\SitemapBehavior',
                         'scope' => function ($model) {
                             /** @var \yii\db\ActiveQuery $model */
                             $model->select(['url', 'lastmod']);
@@ -95,7 +95,7 @@ to the `require` section of your application's `composer.json` file.
                             return [
                                 'loc' => Url::to($model->url, true),
                                 'lastmod' => strtotime($model->lastmod),
-                                'changefreq' => \assayerpro\sitemap\Sitemap::DAILY,
+                                'changefreq' => \sdelfi\sitemap\Sitemap::DAILY,
                                 'priority' => 0.8
                             ];
                         }
@@ -107,7 +107,7 @@ to the `require` section of your application's `composer.json` file.
             // your additional urls
             [
                 'loc' => ['/news/default/index'],
-                'changefreq' => \assayerpro\sitemap\Sitemap::DAILY,
+                'changefreq' => \sdelfi\sitemap\Sitemap::DAILY,
                 'priority' => 0.8,
                 'news' => [
                     'publication'   => [
@@ -132,6 +132,7 @@ to the `require` section of your application's `composer.json` file.
                 ],
             ],
         ],
+        'enableCache' => false, // default is true
         'enableGzip' => true, // default is false
         'cacheExpire' => 1, // 1 second. Default is 24 hours,
         'sortByPriority' => true, // default is false
@@ -142,7 +143,7 @@ to the `require` section of your application's `composer.json` file.
 * Add behavior in the AR models, for example:
 
 ```php
-use assayerpro\sitemap\behaviors\SitemapBehavior;
+use sdelfi\sitemap\behaviors\SitemapBehavior;
 
 public function behaviors()
 {
@@ -188,7 +189,7 @@ Add console command configuration:
 ```php
     'controllerMap' => [
         'sitemap' => [
-            'class' => 'assayerpro\sitemap\console\CreateController',
+            'class' => 'sdelfi\sitemap\console\CreateController',
         ],
     ],
 ```

@@ -9,7 +9,7 @@
  */
 
 
-namespace assayerpro\sitemap\tests\unit;
+namespace sdelfi\sitemap\tests\unit;
 
 use Yii;
 use yii\helpers\Url;

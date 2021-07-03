@@ -9,7 +9,7 @@
  */
 
 
-namespace assayerpro\sitemap\tests\unit;
+namespace sdelfi\sitemap\tests\unit;
 
 use Yii;
 use yii\helpers\Url;
@@ -42,12 +42,12 @@ class Article extends \yii\db\ActiveRecord
     {
         return [
             'sitemap' => [
-                'class' => 'assayerpro\sitemap\behaviors\SitemapBehavior',
+                'class' => 'sdelfi\sitemap\behaviors\SitemapBehavior',
                 'dataClosure' => function ($model) {
                     /** @var \yii\db\ActiveQuery $model */
                     return [
                         'loc' => $model->url,
-                        'changefreq' => \assayerpro\sitemap\Sitemap::WEEKLY,
+                        'changefreq' => \sdelfi\sitemap\Sitemap::WEEKLY,
                         'priority' => 0.8
                     ];
                 }

@@ -1,5 +1,5 @@
 <?php
-use \assayerpro\sitemap\RobotsTxt;
+use \sdelfi\sitemap\RobotsTxt;
 
 
 class RobotsTxtTest extends \Codeception\TestCase\Test
