@@ -2,24 +2,23 @@
 /**
  * CreateController for sitemap module
  *
- * @link https://github.com/assayer-pro/yii2-sitemap-module
+ * @link https://github.com/sdelfi/yii2-sitemap-module
  * @author Serge Larin <serge.larin@gmail.com>
  * @copyright 2015 Assayer Pro Company
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace assayerpro\sitemap\console;
+namespace sdelfi\sitemap\console;
 
 use Yii;
 use yii\console\Controller;
 use yii\helpers\Console;
 
-
 /**
  * Generate sitemap for application
  *
  * @author Serge Larin <serge.larin@gmail.com>
- * @package assayerpro\sitemap
+ * @package sdelfi\sitemap
  */
 class CreateController extends Controller
 {
@@ -54,7 +53,7 @@ class CreateController extends Controller
      */
     public function actionCreate()
     {
-        $file = Yii::getAlias($this->rootDir.'/'.$this->sitemapFile);
+        $file = Yii::getAlias($this->rootDir . '/' . $this->sitemapFile);
         $this->stdout("Generate sitemap file.\n", Console::FG_GREEN);
         $this->stdout("Rendering sitemap...\n", Console::FG_GREEN);
         $sitemap = Yii::$app->sitemap->render();
@@ -63,7 +62,7 @@ class CreateController extends Controller
         file_put_contents($file, $sitemap[0]['xml']);
         $sitemap_count = count($sitemap);
         for ($i = 1; $i < $sitemap_count; $i++) {
-            $file = Yii::getAlias($this->rootDir.'/'.trim($sitemap[$i]['file'], '/'));
+            $file = Yii::getAlias($this->rootDir . '/' . trim($sitemap[$i]['file'], '/'));
             $this->stdout("Writing sitemap to $file\n", Console::FG_GREEN);
             file_put_contents($file, $sitemap[$i]['xml']);
         }
