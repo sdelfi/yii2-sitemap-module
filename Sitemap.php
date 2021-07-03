@@ -12,7 +12,7 @@
  * based on https://github.com/himiklab/yii2-sitemap-module
  */
 
-namespace assayerpro\sitemap;
+namespace sdelfi\sitemap;
 
 use Yii;
 use XMLWriter;
@@ -23,7 +23,7 @@ use yii\helpers\Url;
  *
  * @author Serge Larin <serge.larin@gmail.com>
  * @author HimikLab
- * @package assayerpro\sitemap
+ * @package sdelfi\sitemap
  */
 class Sitemap extends \yii\base\Component
 {

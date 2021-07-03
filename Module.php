@@ -9,7 +9,7 @@
  */
 
 
-namespace assayerpro\sitemap;
+namespace sdelfi\sitemap;
 
 /**
  * Class Module for sitemap
@@ -25,7 +25,7 @@ class Module extends \yii\base\Module
      * @var string
      * @access public
      */
-    public $controllerNamespace = 'assayerpro\sitemap\controllers';
+    public $controllerNamespace = 'sdelfi\sitemap\controllers';
 
     /**
      * @inheritdoc

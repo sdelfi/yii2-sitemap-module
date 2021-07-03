@@ -3,7 +3,7 @@
  * Behavior for XML Sitemap Yii2 module.
  *
  * @author Serge Larin <serge.larin@gmail.com>
- * @link https://github.com/assayer-pro/yii2-sitemap-module
+ * @link https://github.com/sdelfi/yii2-sitemap-module
  * @copyright 2015 Assayer Pro Company
  * @license http://opensource.org/licenses/MIT MIT
  *

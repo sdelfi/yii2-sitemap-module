@@ -10,20 +10,20 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace assayerpro\sitemap\controllers;
+namespace sdelfi\sitemap\controllers;
 
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use assayerpro\sitemap\RobotsTxt;
+use sdelfi\sitemap\RobotsTxt;
 
 /**
  * DefaultController for sitemap module
  *
  * @author Serge Larin <serge.larin@gmail.com>
  * @author HimikLab
- * @package assayerpro\sitemap
+ * @package sdelfi\sitemap
  */
 class DefaultController extends Controller
 {
