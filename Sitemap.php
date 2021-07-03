@@ -14,8 +14,8 @@
 
 namespace sdelfi\sitemap;
 
-use Yii;
 use XMLWriter;
+use Yii;
 use yii\helpers\Url;
 
 /**
@@ -75,7 +75,7 @@ class Sitemap extends \yii\base\Component
      */
     public function render()
     {
-        if($this->enableCache) { 
+        if ($this->enableCache) {
             $result = Yii::$app->cache->get($this->cacheKey);
             if ($result) {
                 return $result;
@@ -94,14 +94,14 @@ class Sitemap extends \yii\base\Component
             $xml->writeAttribute('xmlns', $this->schemas['xmlns']);
             for ($i = 1; $i <= $parts; $i++) {
                 $xml->startElement('sitemap');
-                $xml->writeElement('loc', Url::to(['/sitemap/default/index', 'id' =>$i], true));
+                $xml->writeElement('loc', Url::to('sitemap-' . $i . '.xml', true));
                 $xml->writeElement('lastmod', static::dateToW3C(time()));
                 $xml->endElement();
-                $result[$i]['file'] = Url::to(['/sitemap/default/index', 'id' =>$i], false);
+                $result[$i]['file'] = 'sitemap-' . $i . '.xml';
             }
             $xml->endElement();
             $result[0]['xml'] = $xml->outputMemory();
-            $result[0]['file'] = Url::to(['/sitemap/default/index']);
+            $result[0]['file'] = 'sitemap.xml';
         }
         $urlItem = 0;
         for ($i = 1; $i <= $parts; $i++) {
@@ -119,14 +119,14 @@ class Sitemap extends \yii\base\Component
                         switch ($urlKey) {
                             case 'news':
                                 $namespace = 'news:';
-                                $xml->startElement($namespace.$urlKey);
+                                $xml->startElement($namespace . $urlKey);
                                 static::hashToXML($urlValue, $xml, $namespace);
                                 $xml->endElement();
                                 break;
                             case 'images':
                                 $namespace = 'image:';
                                 foreach ($urlValue as $image) {
-                                    $xml->startElement($namespace.'image');
+                                    $xml->startElement($namespace . 'image');
                                     static::hashToXML($image, $xml, $namespace);
                                     $xml->endElement();
                                 }
@@ -148,7 +148,7 @@ class Sitemap extends \yii\base\Component
             $result[0] = $result[1];
             unset($result[1]);
         }
-        if($this->enableCache) { 
+        if ($this->enableCache) {
             Yii::$app->cache->set($this->cacheKey, $result, $this->cacheExpire);
         }
         return $result;
@@ -176,13 +176,13 @@ class Sitemap extends \yii\base\Component
             }
             $this->renderedUrls = array_merge($this->renderedUrls, $model->generateSiteMap());
         }
-        $this->renderedUrls = array_map(function($item) {
+        $this->renderedUrls = array_map(function ($item) {
             $item['loc'] = Url::to($item['loc'], true);
             if (isset($item['lastmod'])) {
                 $item['lastmod'] = Sitemap::dateToW3C($item['lastmod']);
             }
             if (isset($item['images'])) {
-                $item['images'] = array_map(function($image) {
+                $item['images'] = array_map(function ($image) {
                     $image['loc'] = Url::to($image['loc'], true);
                     return $image;
                 }, $item['images']);
@@ -204,7 +204,7 @@ class Sitemap extends \yii\base\Component
     protected static function hashToXML($hash, $xml, $namespace = '')
     {
         foreach ($hash as $key => $value) {
-            $xml->startElement($namespace.$key);
+            $xml->startElement($namespace . $key);
             if (is_array($value)) {
                 static::hashToXML($value, $xml, $namespace);
             } else {
